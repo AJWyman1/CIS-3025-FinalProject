@@ -1,0 +1,15 @@
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/bin/Debug/netcoreapp6.0/.main
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/bin/Debug/netcoreapp6.0/.main.deps.json
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/bin/Debug/netcoreapp6.0/.main.runtimeconfig.json
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/bin/Debug/netcoreapp6.0/.main.dll
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/bin/Debug/netcoreapp6.0/.main.pdb
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.csproj.AssemblyReference.cache
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.GeneratedMSBuildEditorConfig.editorconfig
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.AssemblyInfoInputs.cache
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.AssemblyInfo.cs
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.csproj.CoreCompileInputs.cache
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.dll
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/refint/.main.dll
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.pdb
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/.main.genruntimeconfig.cache
+/Users/alexanderwyman/Library/CloudStorage/OneDrive-VermontStateColleges/NVU/CIS-3025-Adv_OOP/final_project/CIS-3025-Midterm-Project-awyman1/obj/Debug/netcoreapp6.0/ref/.main.dll

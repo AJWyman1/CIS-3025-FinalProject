@@ -1,0 +1,180 @@
+**** Required ****
+
+Item
+	
+	Potion 
+		HealingPot
+			-Attributes
+			-Methods
+		______
+			-Attributes
+			-Methods
+	ItemType2
+		______
+			-Attributes
+			-Methods
+
+Creature
+	-Interfaces
+		IMobile 
+			GoTo(X, Y)
+			MoveNorth
+			MoveEast
+			MoveSouth
+			MoveWest
+			Face(Direction)
+			MoveForward
+			Turn(int)
+
+			ILocatable
+				X
+				Y
+				Facing
+
+		IActionable
+			Initiative
+
+			Attack
+			Defend
+			DefendAgainst(Creature)
+			Use(IUseable)
+			Rest()
+
+	-Attributes
+		inventory item[]
+
+	-Methods
+		RollInitiative(Multiple Creatures) //How to add variable number of objects into function
+			D20 + modifier
+			return array of creatures in order of initiative
+		IMobile methods
+		IActionable methods
+	---------------------
+	Creaturetype1
+		Monster1
+			-Attributes
+			-Methods
+		Monster2
+			-Attributes
+			-Methods
+	Creaturetype2
+	
+		Monster1
+			-Attributes
+			-Methods
+		Monster2
+			-Attributes
+			-Methods
+	Creaturetype3
+		Monster1
+			-Attributes
+			-Methods
+		Monster2
+			-Attributes
+			-Methods
+	---------------------
+	PlayerCharacter
+		-Attributes
+			inventory item[] 
+		-Methods
+			CreateNew
+				RollStats
+				ChooseClass
+					Class Modifiers
+			PickupItem
+				Item location -> 999,999 (backpack)
+				inventory append item
+			DropItem
+				Item location -> PC.X, PC.Y
+				inventory remove item
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Main
+	Driver function
+		Create PlayerCharacter
+		Spawn Items
+		Spawn creatures
+		Fight()
+
+	Fight(Creature player1, Creature player2)
+		initiative array = Rollinitiative
+		while player1 and player2 alive
+			loop initiative array
+				if playerchar
+					print options
+					take input
+				else
+					Monster fight
+
+
+
+
+
+
+
+
+
+
+Classes
+
+	Starting Equipment 
+		Barbarian
+			Greataxe | any martial melee
+			2 handaxes | any simple weapon
+			explorers pack
+			4 javelins
+		Bard
+			rapier, longsword | any simple weapon
+			diplomat's pack | entertainer's pack
+			lute | any musical instrument
+			Leather armor 
+			dagger
+		Cleric
+			mace | warhammer(if proficient)
+			scale mail, leather armor | chainmail(if proficient)
+			light crossbow and 20 bolts | any simple weapon
+			priests pack | explorers pack
+			shield
+			holy symbol
+		Druid
+			wooden shield | any simple weapon
+			scimitar | any simple melee weapon
+			leather armor
+			explorers pack
+			druidic focus
+		Fighter
+			chainmail | leather, longbow and 20 arrows
+			martial weapon and a shield | two martial weapons
+			light crossbow and 20 bolts | two handaxes
+			dungeoneers pack | explorers pack
+		Monk
+			shortsword | any simple weapon
+			dungeoneers pack | explorers pack
+			10 darts
+		Paladin
+			martial weapon and shield | two martial weapons
+			5 javelins | any simple melee weapon
+			priests pack | explorers pack
+			chainmail and a holy symbol
+		Ranger
+			scalemail | leather armor
+			two shortswords | two simple melee weapons 
+			dungeoneer's pack | an explorer's pack
+			A longbow and a quiver of 20 arrows
+		Rogue
+			(a) a rapier or (b) a shortsword
+			(a) a shortbow and quiver of 20 arrows or (b) a shortsword
+			(a) a burglar's pack, (b) a dungeoneer's pack, or (c) an explorer's pack
+			Leather armor, two daggers, and thieves' tools
+		Sorcerer
+			(a) a light crossbow and 20 bolts or (b) any simple weapon
+			(a) a component pouch or (b) an arcane focus
+			(a) a dungeoneer's pack or (b) an explorer's pack Two daggers
+		Warlock
+			(a) a light crossbow and 20 bolts or (b) any simple weapon
+			(a) a component pouch or (b) an arcane focus
+			(a) a scholar's pack or (b) a dungeoneer's pack Leather armor, any simple weapon, and two daggers
+		Wizard
+			(a) a quarterstaff or (b) a dagger
+			(a) a eomponent pouch or (b) an arcane focus 
+			(a) a scholar's pack or (b) an explorer's pack A spellbook
