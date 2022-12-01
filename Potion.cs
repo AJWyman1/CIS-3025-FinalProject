@@ -13,7 +13,7 @@ abstract class Potion : Item
 
     }
 
-    public override string Use(Creature c)
+    public override string Use(Creature c, int Slot)
     {
         return this.SuccessMessage();
     }

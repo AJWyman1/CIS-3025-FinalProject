@@ -11,12 +11,14 @@ class Dungeon {
     public char[,] EmptyMap;
     public Dictionary<(int, int), Creature> MonsterDict;
     public PlayerCharacter Hero;
+    public Dictionary<(int, int, ILocatable), int> LootDict;
 
     public Dungeon()
     {
         this.Map = this.MakeRoom();
         this.EmptyMap = (char[,])this.Map.Clone();
         this.MonsterDict = new Dictionary<(int, int), Creature>();
+        this.LootDict = new Dictionary<(int, int, ILocatable), int>();
     }
 
     public char[,] MakeRoom()
@@ -50,7 +52,7 @@ class Dungeon {
         do{
         X = Dice.Roll(this.Map.GetLength(0) - 2);
         Y =  Dice.Roll(this.Map.GetLength(1) - 2);
-        }while(this.MonsterDict.ContainsKey((X, Y)));
+        }while(this.MonsterDict.ContainsKey((X, Y))); //Rolls dice for location
 
         int MonsterRoll = Dice.D20();
         if (MonsterRoll < 5)

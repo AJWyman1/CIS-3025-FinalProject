@@ -11,6 +11,6 @@ interface IActionable
     string Attack(Creature defender);
     string Defend();
     string DefendAgainst(Creature attacker);
-    string Use(IUsable used);
+    string Use(IUsable used, int Slot);
     string Rest();
 }

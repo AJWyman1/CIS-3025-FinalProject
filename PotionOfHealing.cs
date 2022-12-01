@@ -46,7 +46,7 @@ class PotionOfHealing : Potion
     {
         return Dice.Roll(this.NumDice, this.Sides, this.Bonus);
     }
-    public override string Use(Creature c)
+    public override string Use(Creature c, int Slot)
     {
         if (this.UsesLeft > 0)
         {

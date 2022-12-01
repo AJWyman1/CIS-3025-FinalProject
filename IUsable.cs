@@ -12,5 +12,5 @@ interface IUsable
     string SuccessMessage();
     string FailureMessage();
 
-    string Use(Creature c);
+    string Use(Creature c, int Slot);
 }

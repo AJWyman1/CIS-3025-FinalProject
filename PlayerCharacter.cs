@@ -26,7 +26,7 @@ class PlayerCharacter : Creature {
 		this.Resistances = "";
 		this.Proficiencies = "";
 		this.RepresentWith = '@';
-		this.Inventory = new Item[6];
+		this.Inventory = new Container<Item>();
 		this.SetName();
 		this.ChooseRace();
 		this.ChooseStats();
@@ -237,7 +237,6 @@ class PlayerCharacter : Creature {
 			Console.WriteLine();
 			SubRaceInt = (int)Char.GetNumericValue(Console.ReadKey(true).KeyChar);
 		} while (!options.Contains(SubRaceInt)); //exits upon selection of acceptable inputs 
-		//SubRaceInt != 1 && SubRaceInt != 2 && (SubRaceInt !=3 && this.PlayerRace != Race.Elf)
 		SubRaceInt += ((int)this.PlayerRace * 10);
 		
 		this.PlayerRace = (Race)SubRaceInt;

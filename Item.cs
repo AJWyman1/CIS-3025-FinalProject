@@ -12,7 +12,7 @@ abstract class Item: IUsable, ILocatable, IComparable
     public int X {get; set;}
     public int Y {get; set;}
     public Direction Facing {get; set;}
-    public char RepresentWith { get; protected set; }
+    public char RepresentWith { get; set; }
 
     public string Name {get; set;}
 
@@ -38,7 +38,7 @@ abstract class Item: IUsable, ILocatable, IComparable
     public abstract string SuccessMessage();
     public abstract string FailureMessage();
 
-    public virtual string Use(Creature c)
+    public virtual string Use(Creature c, int Slot)
     {
         this.UsesLeft -= 1;
         if (this.UseChance * 10 >= Dice.D10())

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/alexanderwyman/final_project2/CIS-3025-Midterm-Project-awyman1/main.csproj",
+      "projectUniqueName": "/Users/alexanderwyman/Projects/CIS-3025/Final/main.csproj",
       "projectName": "main",
-      "projectPath": "/Users/alexanderwyman/final_project2/CIS-3025-Midterm-Project-awyman1/main.csproj",
+      "projectPath": "/Users/alexanderwyman/Projects/CIS-3025/Final/main.csproj",
       "packagesPath": "/Users/alexanderwyman/.nuget/packages/",
-      "outputPath": "/Users/alexanderwyman/final_project2/CIS-3025-Midterm-Project-awyman1/obj/",
+      "outputPath": "/Users/alexanderwyman/Projects/CIS-3025/Final/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/alexanderwyman/.nuget/NuGet/NuGet.Config"

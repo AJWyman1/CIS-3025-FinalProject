@@ -33,9 +33,9 @@ abstract class Weapon : Item
         return Dice.Roll(this.NumDice, this.Sides, this.Bonus);
     }
 
-    public override string Use(Creature c)
+    public override string Use(Creature c, int Slot) //Use applies to when in an inventory; a weapon is used to equip it
     {
-        c.RemoveItem(this);
+        c.RemoveItem(Slot);
         c.EquipWeapon(this);
 
         return $"{c.Name} equipped the {this.Name}.";

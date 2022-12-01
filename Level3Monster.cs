@@ -11,7 +11,7 @@ abstract class Level3Monster : Creature {
     public Level3Monster()
     {
         this.GoldPouch = Dice.Roll(3, 20);
-        this.Inventory = new Item[5];
+        this.Inventory = new Container<Item>(5);
         this.XP = 300;
     }
 }

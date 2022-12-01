@@ -13,6 +13,7 @@ abstract class Creature: IMobile, IActionable, IComparable
     
     /* Properties */
     public String Name { get; protected set; }
+    public Container<Item> Inventory {get; protected set;}
     public int HP { get; set; }
     public int MaxHP { get; protected set;}
     public int ArmorClass { get; protected set; }
@@ -21,7 +22,7 @@ abstract class Creature: IMobile, IActionable, IComparable
 	public int GoldPouch { get; protected set;}
     public Weapon EquippedWeapon { get; protected set;}
     public int ToHit { get; protected set; }
-    public char RepresentWith { get; protected set; } //Char representation for print out in Console
+    
     public bool IsAlive {get; protected set; }
 
     public int Strength
@@ -107,11 +108,12 @@ abstract class Creature: IMobile, IActionable, IComparable
     public int X {get; set;}
     public int Y {get; set;}
     public Direction Facing {get; set;}
+    public char RepresentWith { get; set; } //Char representation for print out in Console
 
     /* IActionable Properties */
 
     public int Initiative {get; set;}
-    public Item[] Inventory {get; protected set;}
+    
 
     /* Constructors */
 
@@ -122,44 +124,35 @@ abstract class Creature: IMobile, IActionable, IComparable
         this.HP = 0;          
         this.Resistances = "";
         this.ToHit = 0;
-        this.Inventory = new Item[2];
+        this.Inventory = new Container<Item>(2);
         this.IsAlive = true;
     }
 
-    public Creature(int X, int Y)
+    public Creature(int X, int Y) : base()
     {
-        this.attributes = new int[6];
-        this.Darkvision = false;
-        this.HP = 0;          
-        this.Resistances = "";
-        this.ToHit = 0;
-        this.Inventory = new Item[2];
-        this.IsAlive = true;
+        this.GoTo(X, Y);
     }
 
     /* methods */
 
     public void PickUpItem(Item i)
     {
-        if(!this.InventoryFull()) // Checks for open slot in inventory 
-        {
-            Array.Sort(this.Inventory); // Sorts empty slot to begining of Inventory array
-            this.Inventory[0] = i;
-        }
+        this.Inventory.Add(i);
     }
 
-    public void RemoveItem(Item i)
+
+    public void PlaceItemOnGround(int Slot)
     {
         //Removes item from inventory and sets its location to the Creature's current location
-        this.Inventory[(Array.IndexOf(this.Inventory, i))] = null;
+        Item i = Inventory.Remove(Slot);
         i.X = this.X;
         i.Y = this.Y;
     }
     public bool InventoryFull()
     {
-        for(int i = 0; i < this.Inventory.Length; i++)
+        for(int i = 0; i < this.Inventory.Entries.Length; i++)
         {
-            if (this.Inventory[i] == null) //Any slot is null means Inventory is not full
+            if (this.Inventory.Entries[i] == null) //Any slot is null means Inventory is not full
             {
                 return false; 
             }
@@ -275,9 +268,14 @@ abstract class Creature: IMobile, IActionable, IComparable
 		return $"{this.Name} rested";
 	}
 
-    public string Use(IUsable item)
+    public void RemoveItem(int Slot)
+	{
+		this.Inventory.Remove(Slot);
+	}
+
+    public string Use(IUsable item, int Slot)
     {
-        return item.Use(this);
+        return item.Use(this, Slot);
     }
 
     /*                  --------    IMobile methods     --------                 */
@@ -398,17 +396,7 @@ abstract class Creature: IMobile, IActionable, IComparable
     
     public string PrintInventory()
 	{
-		string output = "";
-        Array.Sort(this.Inventory);
-        Array.Reverse(this.Inventory);
-		for (int i = 0; i < this.Inventory.Length; i++)
-		{
-			if(this.Inventory[i] != null)
-			{
-				output += "["+((int)(i+1))+"]: "+this.Inventory[i] + "\n";
-			}
-		}
-		return output;
+		return this.Inventory.ToString();
 	}
 
     public void EquipWeapon(Weapon w)
