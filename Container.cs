@@ -29,7 +29,7 @@ class Container < T >
     
     public bool Add(T Entry)
     {
-        for(int i = 0; i > this.Entries.Length; i++)
+        for(int i = 0; i < this.Entries.Length; i++)
         {
             if (this.Entries[i] == null)
             {
@@ -40,8 +40,12 @@ class Container < T >
         return false; //Container full; Item not added
     }
 
-    public T Remove(int slot)
+    public T Remove(int slot, bool ZeroIndexed = true)
     {
+        if (!ZeroIndexed)
+        {
+            slot -= 1;
+        }
         try
         {
             T ToReturn = Entries[slot];
@@ -54,18 +58,25 @@ class Container < T >
         }
     }
 
+    public void SortEntries()
+    {
+        Array.Sort(this.Entries);
+        Array.Reverse(this.Entries);
+    }
+
     public override string ToString()
     {
         string output = "";
 		for (int i = 0; i < this.Entries.Length; i++)
 		{
-			if(this.Entries[i] != null)
+			if(this.Entries[i] == null)
 			{
-				output += "["+((int)(i+1))+"]: "+this.Entries[i] + "\n";
+                output += "["+((int)(i+1))+"]: ----Empty Slot----\n";
 			}
             else
             {
-                output += "["+((int)(i+1))+"]: ----Empty Slot----\n";
+                output += "["+((int)(i+1))+"]: "+this.Entries[i] + "\n";
+
             }
 		}
 		return output;

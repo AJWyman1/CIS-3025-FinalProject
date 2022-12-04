@@ -1,4 +1,5 @@
 using System;
+using System.Media;
 
 class Program
 {
@@ -17,28 +18,25 @@ class Program
 
             Larry.PickUpItem(new Schimitar());
             Larry.PickUpItem(HealthPot);
+
+            PotionOfHealing HealthPot2 = new PotionOfHealing();
+            Larry.PickUpItem(HealthPot2);
             
+
             GameTest(Larry);
         }
     }
 
-    // public static Creature[] PopulateRoom(int numMonsters, int level, ref char[,] room)
-    // {
-    //     Creature[] Monsters = new Creature[numMonsters];
-
-    // }
     public static void GameTest(PlayerCharacter c)
     {
         Dungeon d = new Dungeon();
         Console.Clear();
-        //char[,] map = d.MakeRoom();
-        //char[,] orig = (char[,])map.Clone();
 
         c.GoTo(1, 1);
         d.PlaceHeroInRoom(c);
-        //d.Map[c.X, c.Y] = (char)c;
 
         d.PlaceCreatureInRoom();
+        d.PlaceCreatureInRoom(new Bandit());
 
         c.RollInitiative();
         d.PrintMap();
@@ -49,6 +47,7 @@ class Program
             
             d.PrintMap();
             PrintCharSheet(c);
+
             keyInfo = Console.ReadKey(true);
             int lastX = c.X;
             int lastY = c.Y;
@@ -81,6 +80,31 @@ class Program
                 Console.WriteLine(c.Rest());
             }
             else
+            if (keyInfo.KeyChar == 'p')
+            {
+                if (!d.LootDict.ContainsKey((c.X, c.Y)))
+                {
+                    continue;
+                }
+                //Print out items on the ground
+                Container<Item> Loot = d.ItemsOnGround(c.X, c.Y);
+                PrintLoot(Loot);
+                //Take input
+                int input = (int)Char.GetNumericValue(Console.ReadKey(true).KeyChar) - 1;
+                //Pick up item selected
+                try {
+                    if (Loot.Entries[input] != null)
+                    {
+                        c.PickUpItem(Loot.Entries[input]);
+                        d.ItemPickedUp(Loot.Entries[input], c.X, c.Y);
+                    }
+                }catch(IndexOutOfRangeException)
+                {
+                    
+                }
+                Console.Clear();
+            }
+            else
             {
                 int input = (int)Char.GetNumericValue(keyInfo.KeyChar) - 1;
                 if ( input >= 0 && c.Inventory.Entries[input] != null)
@@ -91,6 +115,7 @@ class Program
                     Console.WriteLine(c.Inventory.Entries[input].Use(c, input));
                 }
             }
+            
             d.Map[lastX, lastY] = d.EmptyMap[lastX, lastY];
             d.Map[c.X, c.Y] = (char)c;
             
@@ -129,6 +154,30 @@ class Program
         Console.WriteLine("  ↓");
         Console.SetCursorPosition(width - 30, charsheet.Length+6);
         Console.WriteLine("[r]est");
+    }
+
+    public static void PrintLoot(Container<Item> Loot)
+    {
+        Loot.SortEntries();
+
+        int width = Console.WindowWidth;
+        int height = Console.WindowHeight;
+        string[] Lootable = Loot.ToString().Split('\n');
+
+        Console.SetCursorPosition(width/2, height/2 - 1);
+        Console.WriteLine("What do you wish to pick up?");
+
+        for (int i = 0; i < Lootable.Length; i++)
+        {
+            if (Loot.Entries[i] == null)
+            {
+                break;
+            }
+            Console.SetCursorPosition(width/2, height/2 + i);
+            Console.WriteLine($"{Lootable[i]}");
+        }
+        
+        
     }
 
 }

@@ -268,9 +268,9 @@ abstract class Creature: IMobile, IActionable, IComparable
 		return $"{this.Name} rested";
 	}
 
-    public void RemoveItem(int Slot)
+    public Item RemoveItem(int Slot, bool ZeroIndexed = true)
 	{
-		this.Inventory.Remove(Slot);
+		return this.Inventory.Remove(Slot);
 	}
 
     public string Use(IUsable item, int Slot)
@@ -413,6 +413,16 @@ abstract class Creature: IMobile, IActionable, IComparable
             }
         }
         this.EquippedWeapon = w;
+    }
+
+    public void UnequipWeapon()
+    {
+        if (this.InventoryFull())
+        {
+            this.PickUpItem(this.EquippedWeapon);
+        
+        }
+        
     }
     public string Heal(int h)
     {

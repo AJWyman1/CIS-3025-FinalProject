@@ -70,4 +70,9 @@ abstract class Item: IUsable, ILocatable, IComparable
         return this.Name;
     }
 
+    public override int GetHashCode()
+    {
+        return ToString().GetHashCode();
+    }
+
 }
