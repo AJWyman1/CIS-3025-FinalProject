@@ -41,4 +41,9 @@ abstract class Weapon : Item
         return $"{c.Name} equipped the {this.Name}.";
     }
 
+    public override string ToString()
+    {
+        return $"{this.Name} - {this.NumDice}D{this.Sides} +{this.Bonus}";
+    }
+
 }

@@ -40,6 +40,9 @@ class Dungeon {
         }
         return Room;
     }
+
+    // Room generation algorithm 
+    // Hallway connecting algorithm 
     public void PlaceHeroInRoom(PlayerCharacter p)
     {
         this.Hero = p;
@@ -83,8 +86,8 @@ class Dungeon {
 
         this.MonsterDict[(X, Y)].GoTo(X, Y);
         this.MonsterDict[(X, Y)].RollInitiative();
-        this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
-        this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
+        //this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
+        //this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
         this.Map[X,Y] = (char)this.MonsterDict[(X, Y)];
     }
 
