@@ -12,33 +12,29 @@ class Dungeon {
     public Dictionary<(int, int), Creature> MonsterDict;
     public PlayerCharacter Hero;
     public Dictionary<(int, int), Dictionary< Item, int>> LootDict;
+    public Room[] Rooms;
 
-    public Dungeon()
+    public Dungeon(int X = 60, int Y = 60, int Rooms = 10)
     {
-        this.Map = this.MakeRoom();
+        this.Map = new char[X,Y];
+        FillMap();
+        this.Rooms = new Room[Rooms];
+        this.CreateRooms(Rooms);
+        this.CreatePasageways(2);
         this.EmptyMap = (char[,])this.Map.Clone();
         this.MonsterDict = new Dictionary<(int, int), Creature>(); 
         this.LootDict = new Dictionary<(int, int), Dictionary< Item, int>>(); //Dictionary of Loot on floor of the dungeon Dict( X, Y : Dict(Item : NumOfType))
     }
 
-    public char[,] MakeRoom()
+    public void FillMap()
     {
-        int H = Dice.D20() + 5;
-        int W = Dice.D20() + 5;
-        char[,] Room = new char[H,W];
-        for (int i = 0; i < Room.GetLength(0); i++)
+        for (int i = 0; i < this.Map.GetLength(0); i++)
         {
-            for (int j = 0; j < Room.GetLength(1); j++)
+            for (int j = 0; j < this.Map.GetLength(1); j++)
             {
-                char fill = '.';
-                if(i == 0 || i == H-1 || j == 0 || j == W-1)
-                {
-                    fill = '#';
-                }
-                Room[i,j] = fill;
+                this.Map[i,j] = ' ';
             }
         }
-        return Room;
     }
 
     // Room generation algorithm 
@@ -46,6 +42,7 @@ class Dungeon {
     public void PlaceHeroInRoom(PlayerCharacter p)
     {
         this.Hero = p;
+        PlaceCreatureInRoom(this.Hero);
     }
 
     public void PlaceCreatureInRoom(Creature c = null)
@@ -53,9 +50,9 @@ class Dungeon {
         int X;
         int Y;
         do{
-        X = Dice.Roll(this.Map.GetLength(0) - 2);
-        Y =  Dice.Roll(this.Map.GetLength(1) - 2);
-        }while(this.MonsterDict.ContainsKey((X, Y))); //Rolls dice for location
+            X = Dice.Roll(this.Map.GetLength(0) - 1);
+            Y =  Dice.Roll(this.Map.GetLength(1) - 1);
+        }while(this.MonsterDict.ContainsKey((X, Y)) || this.Map[X,Y] != '.'); //Rolls dice for location
         if (c == null)
         {
             int MonsterRoll = Dice.D20();
@@ -86,14 +83,14 @@ class Dungeon {
 
         this.MonsterDict[(X, Y)].GoTo(X, Y);
         this.MonsterDict[(X, Y)].RollInitiative();
-        //this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
-        //this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
+        this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
+        this.MonsterDict[(X, Y)].PickUpItem(new PotionOfHealing());
         this.Map[X,Y] = (char)this.MonsterDict[(X, Y)];
     }
 
     public bool MovementAllowed(int X, int Y, Creature c)
     {
-        if (this.Map[X,Y] == '#')
+        if (new char[]{'│', '┌', '┐', '┘', '└', '─', ' '}.Contains(this.Map[X,Y]))
         {
             return false;
         }
@@ -189,10 +186,12 @@ class Dungeon {
                 }
                 else if (i == this.Hero.X && j == this.Hero.Y)
                 {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
                     Console.Write((char)this.Hero);
                 }
                 else if (this.LootDict.ContainsKey((i, j)))
                 {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     char LootChar = this.EmptyMap[i, j]; //Assign the loot char to the floor char
                     foreach(KeyValuePair<Item, int> loot in LootDict[(i, j)])
                     {
@@ -202,8 +201,17 @@ class Dungeon {
                 }
                 else
                 {
+                    if (this.EmptyMap[i, j] == '━' || this.EmptyMap[i, j] == '┃')
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                    }
                     Console.Write(this.EmptyMap[i, j]);
                 }
+                Console.ResetColor();
             }
             Console.Write("\n");
         }
@@ -211,7 +219,7 @@ class Dungeon {
 
     public void PrintLootable(int X, int Y)
     {
-        string output = "";
+        //string output = "";
         if (this.LootDict.ContainsKey((X, Y)))
         {
             int i = 1;
@@ -246,5 +254,399 @@ class Dungeon {
     public void ItemPickedUp(Item loot, int X, int Y)
     {
         this.LootDict[(X, Y)].Remove(loot);
+    }
+
+    //Room Creation
+    public void CreateRooms(int TotalRooms)
+    {
+        int CurrentRoom = 0;
+        do
+        {
+            bool ValidRoom = true;
+            //char[] RoomChars = new char[]{'│', '┌', '┐', '┘', '└', '─', '.'};
+
+            int TopLeftX = Dice.Roll(this.Map.GetLength(0) - 2);
+            int TopLeftY = Dice.Roll(this.Map.GetLength(1) - 2);
+
+            int width = Dice.Roll(10) + 5;
+            int length = Dice.Roll(10) + 5;
+
+            if (((width + TopLeftX + 1) < this.Map.GetLength(0)) && ((length + TopLeftY + 1) < this.Map.GetLength(1)))
+            {
+                for (int i = TopLeftX - 1; i < TopLeftX + width + 1; i ++) // Check if boarders or overlaps an existing room
+                {
+                    for (int j = TopLeftY - 1; j < TopLeftY + length + 1; j ++)
+                    {
+                    if(new char[]{'│', '┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[i,j]))
+                        {
+                            ValidRoom = false; 
+                            i += 99999; //leave outer loop
+                            break;      //leave inner loop
+                        }
+                    } 
+                }
+
+            if (ValidRoom)
+                {
+                    this.Rooms[CurrentRoom] = new Room(TopLeftX, TopLeftY, width, length, Dice.D4());
+                    char[,] NewRoom = this.Rooms[CurrentRoom].Representation();
+                    for (int i = 0; i <  width; i ++)
+                    {
+                        for (int j = 0; j < length; j ++)
+                        {
+                            this.Map[i + TopLeftX, j + TopLeftY] = NewRoom[i,j];
+                        }
+                    }
+                    CurrentRoom ++;
+                }
+            }
+            
+        }while(CurrentRoom < TotalRooms);
+    }
+
+    //Passageway generation
+    public void CreatePasageways(int TotalHallways)
+    {
+      int passageways = 0;
+      do
+      {
+        int StartX = Dice.Roll(this.Map.GetLength(0) - 1);
+        int StartY = Dice.Roll(this.Map.GetLength(1) - 1);
+        bool ValidPassageway = false;
+
+        if (this.Map[StartX, StartY] == '─')
+        {
+          try{
+            if (this.Map[StartX - 1, StartY] == ' ' || this.Map[StartX - 1, StartY] == '#') //At the top
+            {
+              int Up = Dice.D6();
+
+              for(int X = StartX; X >= StartX - Up; X--)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[X, StartY]))
+                {
+                  Up -= 1;
+                  X = StartX;
+                }
+              }
+
+              if (Up == 0)
+              {
+                continue;
+              }
+              
+              int Right = 0;
+            
+              for(int EndY = StartY; EndY < this.Map.GetLength(1); EndY++)
+              {
+                if (new char[]{'┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[StartX - Up, EndY]))
+                {
+                  break;
+                }
+                
+                if (this.Map[StartX - Up, EndY] == '│')
+                {
+                  AddVerticalPasageway(StartX, StartY, Up, Right);
+                  ValidPassageway = true;
+                  break;
+                }
+                
+                Right += 1;
+              }
+              int Left = 0;
+              for(int EndY = StartY; EndY > 0; EndY--)
+              {
+                if (new char[]{'┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[StartX - Up, EndY]))
+                {
+                  break;
+                }
+                
+                if (this.Map[StartX - Up, EndY] == '│')
+                {
+                  AddVerticalPasageway(StartX, StartY, Up, Left);
+                  ValidPassageway = true;
+                  break;
+                }
+                Left -= 1;
+              }
+            }
+            else //At bottom
+            {
+              int Down = Dice.D6();
+              
+              for(int X = StartX; X >= StartX + Down; X++)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[X, StartY]))
+                {
+                  Down -= 1;
+                  X = StartX;
+                }
+              }
+
+              if (Down == 0)
+              {
+                continue;
+              }
+              
+              int Right = 0;
+              for(int EndY = StartY; EndY < this.Map.GetLength(1); EndY++)
+              {
+                if (new char[]{'┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[StartX + Down, EndY]))
+                {
+                  break;
+                }
+                if (this.Map[StartX + Down, EndY] == '│' || this.Map[StartX + Down, EndY] == '#')
+                {
+                  AddVerticalPasageway(StartX, StartY, Down * -1, Right);
+                  ValidPassageway = true;
+                  break;
+                }
+                Right += 1;
+              }
+              int Left = 0;
+              for(int EndY = StartY; EndY > 0; EndY--)
+              {
+                if (new char[]{'┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[StartX + Down, EndY]))
+                {
+                  break;
+                }
+                if (this.Map[StartX + Down, EndY] == '│' || this.Map[StartX + Down, EndY] == '#')
+                {
+                  AddVerticalPasageway(StartX, StartY, Down * -1, Left);
+                  ValidPassageway = true;
+                  break;
+                }
+                Left -= 1;
+              }
+            }
+          }catch (IndexOutOfRangeException)
+          {continue;}
+        }
+
+        if (this.Map[StartX, StartY] == '│')
+        {
+          try{
+            if (this.Map[StartX, StartY - 1] == ' ' || this.Map[StartX, StartY - 1] == '#') //At the left
+            {
+              int Left = Dice.D6();
+              for(int Y = StartY; Y > StartY - Left; Y--)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[StartX, Y]))
+                {
+                  Left -= 1;
+                  Y = StartY;
+                }
+              }
+
+              if (Left == 0)
+              {
+                continue;
+              }
+
+              int Up = 0; //Build hall up
+
+              for(int EndX = StartX; EndX >= 0; EndX--)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '.'}.Contains(this.Map[EndX, StartY - Left]))
+                {
+                  break;
+                }
+                if (this.Map[EndX, StartY - Left] == '─' || this.Map[EndX, StartY - Left] == '#')
+                {
+                  AddHorizontalPasageway(StartX, StartY, Up, Left * -1);
+                  ValidPassageway = true;
+                  break;
+                }
+                Up += 1;
+              }
+
+              int Down = 0; //build hall down
+              
+              for(int EndX = StartX; EndX <= this.Map.GetLength(0); EndX++)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '.'}.Contains(this.Map[EndX, StartY - Left]))
+                {
+                  break;
+                }
+                if (this.Map[EndX, StartY - Left] == '─' || this.Map[EndX, StartY - Left] == '#')
+                {
+                  AddHorizontalPasageway(StartX, StartY, Down, Left * -1);
+                  ValidPassageway = true;
+                  break;
+                }
+                Down -= 1;
+              }
+            }
+            else //At Right
+            {
+              int Right = Dice.D6();
+              for(int Y = StartY; Y < StartY + Right; Y++)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '─', '.'}.Contains(this.Map[StartX, Y]))
+                {
+                  Right -= 1;
+                  Y = StartY;
+                }
+              }
+
+              if (Right == 0)
+              {
+                continue;
+              }
+
+              int Up = 0; //Build hall up
+
+              for(int EndX = StartX; EndX >= 0; EndX--)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '.'}.Contains(this.Map[EndX, StartY + Right]))
+                {
+                  break;
+                }
+                if (this.Map[EndX, StartY + Right] == '─' || this.Map[EndX, StartY + Right] == '#')
+                {
+                  AddHorizontalPasageway(StartX, StartY, Up, Right);
+                  ValidPassageway = true;
+                  break;
+                }
+                Up += 1;
+              }
+
+              int Down = 0; //build hall down
+              
+              for(int EndX = StartX; EndX <= this.Map.GetLength(0); EndX++)
+              {
+                if (new char[]{'│', '┌', '┐', '┘', '└', '.'}.Contains(this.Map[EndX, StartY + Right]))
+                {
+                  break;
+                }
+                if (this.Map[EndX, StartY + Right] == '─' || this.Map[EndX, StartY + Right] == '#')
+                {
+                  AddHorizontalPasageway(StartX, StartY, Down, Right);
+                  ValidPassageway = true;
+                  break;
+                }
+                Down -= 1;
+              }
+            }
+          }catch (IndexOutOfRangeException)
+          {continue;}
+        }
+        if (ValidPassageway)
+        {
+          passageways += 1;
+          // Console.WriteLine($"Passageway {passageways} completed at {StartX}, {StartY}");
+          // PrintGrid(grid);
+          // char Waiting = Console.ReadKey(true).KeyChar;
+          //Console.Clear();
+        }
+      }while (passageways < TotalHallways);
+    }
+
+    public void  AddVerticalPasageway(int StartX, int StartY, int Up, int Right)
+    {
+        if (Up > 0)
+        {
+        for(int X = StartX; X >= StartX - Up; X--)
+            {
+            this.Map[X, StartY] = '#';
+            }
+        
+        if (Right > 0)
+        {
+            for(int Y = StartY; Y <= StartY + Right; Y++)
+            {
+            this.Map[StartX - Up, Y] = '#';
+            }
+        }
+        else //Left
+        {
+            int Left = Math.Abs(Right);
+
+            for(int Y = StartY; Y >= StartY - Left; Y--)
+            {
+            this.Map[StartX - Up, Y] = '#';
+            }
+        }
+        }
+        else //Down
+        {
+        int Down = Math.Abs(Up);
+
+        for(int X = StartX; X <= StartX + Down; X++)
+            {
+            this.Map[X, StartY] = '#';
+            }
+        
+        if (Right > 0)
+        {
+            for(int Y = StartY; Y <= StartY + Right; Y++)
+            {
+            this.Map[StartX + Down, Y] = '#';
+            }
+        }
+        else //Left
+        {
+            int Left = Math.Abs(Right);
+
+            for(int Y = StartY; Y >= StartY - Left; Y--)
+            {
+            this.Map[StartX + Down, Y] = '#';
+            }
+        }
+        }
+    }
+
+    public void AddHorizontalPasageway(int StartX, int StartY, int Up, int Right)
+    {
+        if (Right > 0)
+        {
+            for(int Y = StartY; Y <= StartY + Right; Y++)
+                {
+                    this.Map[StartX, Y] = '#';
+                }
+            
+            if (Up > 0)
+            {
+                for(int X = StartX; X >= StartX - Up; X--)
+                {
+                    this.Map[X, StartY + Right] = '#';
+                }
+            }
+            else //Down
+            {
+                int Down = Math.Abs(Up);
+
+                for(int X = StartX; X <= StartX + Down; X++)
+                {
+                    this.Map[X, StartY + Right] = '#';
+                }
+            }
+        }
+        else //Left
+        {
+        int Left = Math.Abs(Right);
+
+        for(int Y = StartY; Y >= StartY - Left; Y--)
+            {
+            this.Map[StartX, Y] = '#';
+            }
+        
+        if (Up > 0)
+        {
+            for(int X = StartX; X >= StartX - Up; X--)
+            {
+            this.Map[X, StartY - Left] = '#';
+            }
+        }
+        else //Down
+        {
+            int Down = Math.Abs(Up);
+
+            for(int X = StartX; X <= StartX + Down; X++)
+            {
+            this.Map[X, StartY - Left] = '#';
+            }
+        }
+        }
     }
 }

@@ -21,7 +21,7 @@ class Hobgoblin : Level2Monster {
         this.MaxHP =        11;
         this.ArmorClass =   18;
         this.Darkvision = true;
-        this.EquippedWeapon = new Longsword("Hobgoblin Longsword",1, 10, 1);
+        this.EquippedWeapon = new Longsword("Hobgoblin Longsword",10, 1, 1);
         this.ToHit = 3;
     }
 

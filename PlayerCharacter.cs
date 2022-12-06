@@ -50,6 +50,7 @@ class PlayerCharacter : Creature {
 		this.attributes = stats;
 		this.AddRacialModifiers();
 		this.PlayerClass = playerClass;
+		this.SetClassProficiencies();
 		this.SetHitDie();
 		this.HP += this.HitDie + AbilityModifier(this.Constitution);
 		this.MaxHP = this.HP;
@@ -301,7 +302,7 @@ class PlayerCharacter : Creature {
 			modify[4] = 1;
 		}else if (RaceInt == 23) // Dark Elf
 		{
-			this.Proficiencies += "rapier, shortsword, hand crossbow";
+			this.Proficiencies += "rapier, shortsword, hand crossbow, ";
 			this.Darkvision = true;
 			modify[1] = 2;
 			modify[5] = 1;
@@ -415,6 +416,26 @@ class PlayerCharacter : Creature {
 
 		this.PlayerClass = (Class)Array.IndexOf(options, input); //Might be my favorite line
 
+		string[] ClassProficiencies = 
+		{
+			"light armor, medium armor, shield, simple weapon, martial weapon, ",
+			"light armor, simple weapon, hand crossbow, longsword, rapier, shortsword, ",
+			"light armor, medium armor, shield, simple weapon, ",
+			"light armor (nonmetal), medium armor (nonmetal), shield (nonmetal), club, dagger, dart, javelin, mace, quarterstaff, scimitar, sickle, sling, spear, ",
+			"light armor, medium armor, heavy armor, shield, simple weapon, martial weapon, ",
+			"simple weapon, shortsword, ",
+			"light armor, medium armor, heavy armor, shield, simple weapon, martial weapon, ",
+			"light armor, medium armor, shield, simple weapon, martial weapon, ",
+			"light armor, simple weapon, hand crossbow, longsword, rapier, shortsword, ",
+			"dagger, dart, sling, quarterstaff, light crossbow, ",
+			"light armor, simple weapon, ",
+			"dagger, dart, sling, quarterstaff, light crossbow, "
+		};
+		this.Proficiencies += ClassProficiencies[(int)this.PlayerClass];
+	}
+
+	public void SetClassProficiencies()
+	{
 		string[] ClassProficiencies = 
 		{
 			"light armor, medium armor, shield, simple weapon, martial weapon, ",

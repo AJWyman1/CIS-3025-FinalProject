@@ -9,7 +9,8 @@ class Program
         Console.Clear();
 
         Console.WriteLine("Would you like to play a game? [y/n]");
-        if (Console.ReadKey(true).KeyChar == 'y')
+        char input = Console.ReadKey(true).KeyChar;
+        if (input == 'y')
         {
             Console.Clear();
             PlayerCharacter Larry = new PlayerCharacter(ChooseRace(), SelectClass(), SetPlayerName(), ChooseStats());
@@ -23,12 +24,34 @@ class Program
             PotionOfHealing HealthPot2 = new PotionOfHealing();
             Larry.PickUpItem(HealthPot2);
             
+            Console.WriteLine("Before you is the entrance to a dungeon that is rumoured to contain a treasure chest full of wealth beyond your greatest imagination guarded by hordes of foes and others searching for wealth.\nAll those who have entered either come out scarred and empty handed or not at all. \nDo you dare to decend? [y/n]");
+            if (Console.ReadKey(true).KeyChar == 'y')
+            {
+                Game(Larry);
+            }
+            else
+            {
+                Console.WriteLine($"Wise move {Larry.Name}, you may live to see another day.");
+            }
+        }else if (input == 'r')
+        {
+            Console.Clear();
+            PlayerCharacter Larry = new PlayerCharacter(Race.HalfOrc, Class.Barbarian, "Larry", new int[]{99,99,99,99,99,99});
+            Larry.EquipWeapon(new Greataxe());
 
-            GameTest(Larry);
+            PotionOfHealing HealthPot = new PotionOfHealing();
+
+            Larry.PickUpItem(new Schimitar());
+            Larry.PickUpItem(HealthPot);
+
+            PotionOfHealing HealthPot2 = new PotionOfHealing();
+            Larry.PickUpItem(HealthPot2);
+
+            Game(Larry);
         }
     }
 
-    public static void GameTest(PlayerCharacter c)
+    public static void Game(PlayerCharacter c)
     {
         Dungeon d = new Dungeon();
         Console.Clear();
@@ -36,9 +59,10 @@ class Program
         c.GoTo(1, 1);
         d.PlaceHeroInRoom(c);
 
-        d.PlaceCreatureInRoom();
-        d.PlaceCreatureInRoom(new Bandit());
-
+        for (int i = 0; i < 0; i++)
+        {
+            d.PlaceCreatureInRoom();
+        }
         c.RollInitiative();
         d.PrintMap();
 
@@ -46,8 +70,9 @@ class Program
         do
         {
             
-            d.PrintMap();
             PrintCharSheet(c);
+            d.PrintMap();
+            
 
             keyInfo = Console.ReadKey(true);
             int lastX = c.X;
@@ -81,6 +106,11 @@ class Program
                 Console.WriteLine(c.Rest());
             }
             else
+            if (keyInfo.KeyChar == 'n')
+            {
+                Game(c);
+            }
+            else
             if (keyInfo.KeyChar == 'p')
             {
                 if (!d.LootDict.ContainsKey((c.X, c.Y)))
@@ -111,8 +141,10 @@ class Program
                 if ( input >= 0 && c.Inventory.Entries[input] != null)
                 {
                     Console.Clear();
-                    d.PrintMap();
+                    
                     PrintCharSheet(c);
+                    d.PrintMap();
+
                     Console.WriteLine(c.Inventory.Entries[input].Use(c, input));
                 }
             }
@@ -182,7 +214,15 @@ class Program
     }
 
 
+
+
+
+
+
     //// PC creation Methods
+
+
+
 
     
 
