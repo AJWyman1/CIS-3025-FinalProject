@@ -53,11 +53,12 @@ class Program
 
     public static void Game(PlayerCharacter c)
     {
-        Dungeon d = new Dungeon();
+        Dungeon d = new Dungeon(c, Console.WindowHeight - 20, Console.WindowWidth - 45);
+
+        d.PlaceHeroInRoom(c);
         Console.Clear();
 
-        c.GoTo(1, 1);
-        d.PlaceHeroInRoom(c);
+        
 
         for (int i = 0; i < 0; i++)
         {
@@ -71,7 +72,7 @@ class Program
         {
             
             PrintCharSheet(c);
-            d.PrintMap();
+            //d.PrintMap();
             
 
             keyInfo = Console.ReadKey(true);
@@ -155,7 +156,7 @@ class Program
             if (lastX != c.X || lastY != c.Y)
             {
                 d.MovementUpdate(c, lastX, lastY);
-                Console.Clear();
+                //Console.Clear();
             }
             
         } while (keyInfo.Key != ConsoleKey.Escape && c.HP > 0);
@@ -187,6 +188,8 @@ class Program
         Console.WriteLine("  ↓");
         Console.SetCursorPosition(width - 30, charsheet.Length+6);
         Console.WriteLine("[r]est");
+        Console.SetCursorPosition(width - 30, charsheet.Length+7);
+        Console.WriteLine("[p]ick up");
     }
 
     public static void PrintLoot(Container<Item> Loot)

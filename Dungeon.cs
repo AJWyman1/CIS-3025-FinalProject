@@ -13,17 +13,36 @@ class Dungeon {
     public PlayerCharacter Hero;
     public Dictionary<(int, int), Dictionary< Item, int>> LootDict;
     public Room[] Rooms;
+    public int Width;
+    public int Length;
 
-    public Dungeon(int X = 60, int Y = 60, int Rooms = 10)
+    public Dungeon(PlayerCharacter c, int X = 60, int Y = 60, int Rooms = 10)
     {
+        this.Hero = c;
+        this.Length = X;
+        this.Width = Y;
         this.Map = new char[X,Y];
         FillMap();
         this.Rooms = new Room[Rooms];
         this.CreateRooms(Rooms);
-        this.CreatePasageways(2);
+        this.CreatePasageways(12);
+        this.MonsterDict = new Dictionary<(int, int), Creature>();
+        this.LootDict = new Dictionary<(int, int), Dictionary< Item, int>>(); //Dictionary of Loot on floor of the dungeon Dict( X, Y : Dict(Item : NumOfType))
+
+        this.EmptyMap = (char[,])this.Map.Clone();
+        while(!this.Navigatable())
+        {
+            
+            this.CreatePasageways(2);
+            this.EmptyMap = (char[,])this.Map.Clone();
+            this.PrintMap();
+            this.MonsterDict = new Dictionary<(int, int), Creature>();
+        }
+
         this.EmptyMap = (char[,])this.Map.Clone();
         this.MonsterDict = new Dictionary<(int, int), Creature>(); 
         this.LootDict = new Dictionary<(int, int), Dictionary< Item, int>>(); //Dictionary of Loot on floor of the dungeon Dict( X, Y : Dict(Item : NumOfType))
+
     }
 
     public void FillMap()
@@ -105,6 +124,19 @@ class Dungeon {
         return true;
     }
 
+    public bool MovementAllowed(int X, int Y)
+    {
+        if (new char[]{'│', '┌', '┐', '┘', '└', '─', ' '}.Contains(this.Map[X,Y]))
+        {
+            return false;
+        }
+        if (this.MonsterDict.ContainsKey((X, Y)))
+        {
+            return false;
+        }
+        return true;
+    }
+
     public void PrintFightLog(Creature a, Creature b)
     {
         Creature[] fighters = {a, b};
@@ -165,6 +197,8 @@ class Dungeon {
     {
         this.MonsterDict.Remove((LastX, LastY));
         this.MonsterDict.Add((c.X, c.Y), c);
+        PrintLocation(LastX, LastY);
+        PrintLocation(c.X, c.Y);
     }
 
     public Creature GetCreature(int x, int y)
@@ -186,7 +220,7 @@ class Dungeon {
                 }
                 else if (i == this.Hero.X && j == this.Hero.Y)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
                     Console.Write((char)this.Hero);
                 }
                 else if (this.LootDict.ContainsKey((i, j)))
@@ -215,6 +249,44 @@ class Dungeon {
             }
             Console.Write("\n");
         }
+    }
+
+    public void PrintLocation(int i, int j)
+    {
+        Console.SetCursorPosition(j, i);
+
+        if(this.MonsterDict.ContainsKey((i, j)))
+                {
+                    Console.Write((char)this.MonsterDict[(i, j)]);
+                }
+                else if (i == this.Hero.X && j == this.Hero.Y)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.Write((char)this.Hero);
+                }
+                else if (this.LootDict.ContainsKey((i, j)))
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    char LootChar = this.EmptyMap[i, j]; //Assign the loot char to the floor char
+                    foreach(KeyValuePair<Item, int> loot in LootDict[(i, j)])
+                    {
+                        LootChar = loot.Key.RepresentWith;
+                    }
+                    Console.Write(LootChar);
+                }
+                else
+                {
+                    if (this.EmptyMap[i, j] == '━' || this.EmptyMap[i, j] == '┃')
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                    }
+                    Console.Write(this.EmptyMap[i, j]);
+                }
+                Console.ResetColor();
     }
 
     public void PrintLootable(int X, int Y)
@@ -308,13 +380,19 @@ class Dungeon {
     public void CreatePasageways(int TotalHallways)
     {
       int passageways = 0;
+      int Attempt = 0;
       do
       {
         int StartX = Dice.Roll(this.Map.GetLength(0) - 1);
         int StartY = Dice.Roll(this.Map.GetLength(1) - 1);
         bool ValidPassageway = false;
 
-        if (this.Map[StartX, StartY] == '─')
+        // int StartX = Location.Item1;
+        // int StartY = Location.Item2;
+
+        
+        
+        if (this.Map[StartX, StartY] == '━' || this.Map[StartX, StartY] == '─')
         {
           try{
             if (this.Map[StartX - 1, StartY] == ' ' || this.Map[StartX - 1, StartY] == '#') //At the top
@@ -344,7 +422,7 @@ class Dungeon {
                   break;
                 }
                 
-                if (this.Map[StartX - Up, EndY] == '│')
+                if (this.Map[StartX - Up, EndY] == '┃' || this.Map[StartX - Up, EndY] == '#' || this.Map[StartX - Up, EndY] == '│')
                 {
                   AddVerticalPasageway(StartX, StartY, Up, Right);
                   ValidPassageway = true;
@@ -361,7 +439,7 @@ class Dungeon {
                   break;
                 }
                 
-                if (this.Map[StartX - Up, EndY] == '│')
+                if (this.Map[StartX - Up, EndY] == '┃' || this.Map[StartX - Up, EndY] == '#' || this.Map[StartX - Up, EndY] == '│')
                 {
                   AddVerticalPasageway(StartX, StartY, Up, Left);
                   ValidPassageway = true;
@@ -395,7 +473,7 @@ class Dungeon {
                 {
                   break;
                 }
-                if (this.Map[StartX + Down, EndY] == '│' || this.Map[StartX + Down, EndY] == '#')
+                if (this.Map[StartX + Down, EndY] == '┃' || this.Map[StartX + Down, EndY] == '#' || this.Map[StartX + Down, EndY] == '│')
                 {
                   AddVerticalPasageway(StartX, StartY, Down * -1, Right);
                   ValidPassageway = true;
@@ -410,7 +488,7 @@ class Dungeon {
                 {
                   break;
                 }
-                if (this.Map[StartX + Down, EndY] == '│' || this.Map[StartX + Down, EndY] == '#')
+                if (this.Map[StartX + Down, EndY] == '┃' || this.Map[StartX + Down, EndY] == '#' || this.Map[StartX + Down, EndY] == '│')
                 {
                   AddVerticalPasageway(StartX, StartY, Down * -1, Left);
                   ValidPassageway = true;
@@ -423,7 +501,7 @@ class Dungeon {
           {continue;}
         }
 
-        if (this.Map[StartX, StartY] == '│')
+        if (this.Map[StartX, StartY] == '┃' || this.Map[StartX, StartY] == '│')
         {
           try{
             if (this.Map[StartX, StartY - 1] == ' ' || this.Map[StartX, StartY - 1] == '#') //At the left
@@ -451,7 +529,7 @@ class Dungeon {
                 {
                   break;
                 }
-                if (this.Map[EndX, StartY - Left] == '─' || this.Map[EndX, StartY - Left] == '#')
+                if (this.Map[EndX, StartY - Left] == '─' || this.Map[EndX, StartY - Left] == '#' || this.Map[EndX, StartY - Left] == '━')
                 {
                   AddHorizontalPasageway(StartX, StartY, Up, Left * -1);
                   ValidPassageway = true;
@@ -468,7 +546,7 @@ class Dungeon {
                 {
                   break;
                 }
-                if (this.Map[EndX, StartY - Left] == '─' || this.Map[EndX, StartY - Left] == '#')
+                if (this.Map[EndX, StartY - Left] == '─' || this.Map[EndX, StartY - Left] == '━' || this.Map[EndX, StartY - Left] == '#')
                 {
                   AddHorizontalPasageway(StartX, StartY, Down, Left * -1);
                   ValidPassageway = true;
@@ -502,7 +580,7 @@ class Dungeon {
                 {
                   break;
                 }
-                if (this.Map[EndX, StartY + Right] == '─' || this.Map[EndX, StartY + Right] == '#')
+                if (this.Map[EndX, StartY + Right] == '─' || this.Map[EndX, StartY + Right] == '━' || this.Map[EndX, StartY + Right] == '#')
                 {
                   AddHorizontalPasageway(StartX, StartY, Up, Right);
                   ValidPassageway = true;
@@ -519,7 +597,7 @@ class Dungeon {
                 {
                   break;
                 }
-                if (this.Map[EndX, StartY + Right] == '─' || this.Map[EndX, StartY + Right] == '#')
+                if (this.Map[EndX, StartY + Right] == '─' || this.Map[EndX, StartY + Right] == '━' || this.Map[EndX, StartY + Right] == '#')
                 {
                   AddHorizontalPasageway(StartX, StartY, Down, Right);
                   ValidPassageway = true;
@@ -538,6 +616,11 @@ class Dungeon {
           // PrintGrid(grid);
           // char Waiting = Console.ReadKey(true).KeyChar;
           //Console.Clear();
+        }
+        Attempt += 1;
+        if (Attempt > 10)
+        {
+            break;
         }
       }while (passageways < TotalHallways);
     }
@@ -648,5 +731,305 @@ class Dungeon {
             }
         }
         }
+    }
+
+    public void PWaysForDoors()
+    {
+        foreach(Room room in this.Rooms)
+        {
+            foreach(var Location in room.DoorLocations.Keys)
+            {
+                int StartX = Location.Item1;
+                int StartY = Location.Item2;
+
+                //CreatePasageways(1, Location);
+                char Door = room.DoorLocations[(Location)];
+
+                //char[,] Path = new char[this.Length, this.Width];
+
+                if (Door == '━') 
+                {
+                    if (this.Map[StartX - 1, StartY] == ' ' || this.Map[StartX - 1, StartY] == '#') //Top
+                        {
+                            StartX -= 1;
+                            //Path = SeekUp(StartX, StartY);
+                        }
+                    else //Bottom
+                        {
+                            StartX += 1;
+                        }
+                }
+                else
+                {
+                    if (this.Map[StartX, StartY - 1] == ' ' || this.Map[StartX, StartY - 1] == '#') //Left
+                        {
+                            StartY -= 1;
+                        }
+                    else //Right
+                        {
+                            StartY += 1;
+                        }
+                }
+
+                // for(int i = 0; i < this.Map.GetLength(0); i++)
+                // {
+                //     for (int j = 0; j < this.Map.GetLength(1); j++)
+                //     {
+                //         if (Path[i,j] == '#')
+                //         {
+                //             this.Map[i,j] = '#';
+                //         }
+                //     }
+                // }
+            }
+        }
+    }
+
+
+    public bool IsWall(char C)
+    {
+        return !(new char[]{'│', '─', '┌', '┐', '┘', '└', '.'}.Contains(C));
+    }
+
+    public bool DoorUp(int X, int Y)
+    {
+        for(int Up = X; Up >= 0; Up--)
+        {
+            if (this.Map[Up,Y] == '━')
+            {
+                return true;
+            }
+            if (IsWall(this.Map[Up,Y]))
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+    public bool DoorDown(int X, int Y)
+    {
+        for(int Down = X; Down < this.Length; Down++)
+        {
+            if (this.Map[Down,Y] == '━')
+            {
+                return true;
+            }
+            if (IsWall(this.Map[Down,Y]))
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+    public bool DoorLeft(int X, int Y)
+    {
+        for(int Left = Y; Left >= 0; Left--)
+        {
+            if (this.Map[X, Left] == '┃')
+            {
+                return true;
+            }
+            if (IsWall(this.Map[X,Left]))
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+    public bool DoorRight(int X, int Y)
+    {
+        for(int Right = Y; Right < Width; Right++)
+        {
+            if (this.Map[X, Right] == '┃')
+            {
+                return true;
+            }
+            if (IsWall(this.Map[X, Right]))
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    public char[,] SeekUp(int X, int Y, char[,] input = null)
+    {
+        char[,] output = new char[this.Length, this.Width];
+        if (input != null)
+        {
+            output = input;
+        }
+        int MoveUp = 0;
+        if (!DoorUp(X, Y))
+        {
+            for(int Up = X; Up >= 0; Up--)
+            {
+                if (this.Map[Up,Y] == '━')
+                {
+                    return output;
+                }
+                if (DoorRight(Up, Y))
+                {
+                    return SeekRight(Up, Y, output);
+                }
+                if (DoorLeft(Up, Y))
+                {
+                    return SeekLeft(Up, Y, output);
+                }
+                MoveUp++;
+                output[Up,Y] = '#';
+            }
+        }
+        else 
+        {
+            for(int Up = X; Up >= 0; Up--)
+            {
+                if (this.Map[Up,Y] == '━')
+                {
+                    return output;
+                }
+                output[Up, Y] = '#';
+            }
+        }
+        if (Dice.D4() > 2)
+        {
+            return SeekLeft(X + MoveUp, Y, output);
+        }
+        else
+        {
+            return SeekRight(X + MoveUp, Y, output);
+        }
+    }
+
+    public char[,] SeekDown(int X, int Y, char[,] input = null)
+    {
+        char[,] output = new char[this.Length, this.Width];
+        if (input != null)
+        {
+            output = input;
+        }
+        for(int Down = X; Down < this.Length; Down++)
+        {
+            
+        }
+
+        return output;
+    }
+
+    public char[,] SeekLeft(int X, int Y, char[,] input = null)
+    {
+        char[,] output = new char[this.Length, this.Width];
+        if (input != null)
+        {
+            output = input;
+        }
+        for(int Left = Y; Left >= 0; Left--)
+        {
+            
+        }
+
+        return output;
+    }
+
+    public char[,] SeekRight(int X, int Y, char[,] input = null)
+    {
+        char[,] output = new char[this.Length, this.Width];
+        if (input != null)
+        {
+            output = input;
+        }
+        for(int Right = Y; Right < this.Width; Right++)
+        {
+            
+        }
+
+        return output;
+    }
+
+    public bool Navigatable()
+    {
+        Bandit B = new Bandit();
+        int StartX = this.Rooms[0].X + 3;
+        int StartY = this.Rooms[0].Y + 3;
+        B.GoTo(StartX, StartY);
+        
+        
+        char[,] WalkableMap = new char[this.Length,this.Width];
+
+        this.MonsterDict.Add((B.X, B.Y), B);
+        int Moves = 0;
+        do{
+            Moves = 0;
+            Dictionary<(int, int), Creature> WalkerDict = new Dictionary<(int, int), Creature>();
+
+            foreach(KeyValuePair<(int, int), Creature> pair in this.MonsterDict)
+            {
+                WalkerDict.Add(pair.Key, pair.Value);
+            }
+
+            foreach (Creature Walker in WalkerDict.Values)
+            {
+                    while (this.MovementAllowed(Walker.X - 1, Walker.Y))
+                        {
+                            Walker.MoveNorth();
+                            Moves ++;
+                            WalkableMap[Walker.X, Walker.Y] = this.Map[Walker.X, Walker.Y];
+
+                            Bandit WN = new Bandit();
+                            WN.GoTo(Walker.X, Walker.Y);
+                            this.MonsterDict.Add((Walker.X, Walker.Y), WN);
+                        }
+                
+                    while (this.MovementAllowed(Walker.X, Walker.Y - 1))
+                        {
+                            Walker.MoveWest();
+                            Moves ++;
+                            WalkableMap[Walker.X, Walker.Y] = this.Map[Walker.X, Walker.Y];
+
+                            Bandit WW = new Bandit();
+                            WW.GoTo(Walker.X, Walker.Y);
+                            this.MonsterDict.Add((Walker.X, Walker.Y), WW);
+                        }
+                    
+                    while (this.MovementAllowed(Walker.X + 1, Walker.Y))
+                        { 
+                            Walker.MoveSouth();
+                            Moves ++;
+                            WalkableMap[Walker.X, Walker.Y] = this.Map[Walker.X, Walker.Y];
+                            
+                            Bandit WS = new Bandit();
+                            WS.GoTo(Walker.X, Walker.Y);
+                            this.MonsterDict.Add((Walker.X, Walker.Y), WS);
+                        }
+                    
+                    while (this.MovementAllowed(Walker.X, Walker.Y + 1))
+                        { 
+                            Walker.MoveEast();
+                            Moves ++;
+                            WalkableMap[Walker.X, Walker.Y] = this.Map[Walker.X, Walker.Y];
+
+                            Bandit WE = new Bandit();
+                            WE.GoTo(Walker.X, Walker.Y);
+                            this.MonsterDict.Add((Walker.X, Walker.Y), WE);
+                        }
+                }
+            }while(Moves > 0);
+            
+        for(int i = 0; i < this.Map.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.Map.GetLength(1); j++)
+                    {
+                        if (this.Map[i,j] == '.' && !this.MonsterDict.ContainsKey((i,j)))
+                        {
+                            return false;
+                        }
+                }
+            }
+        
+        return true;
     }
 }
