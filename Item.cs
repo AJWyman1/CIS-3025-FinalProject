@@ -13,6 +13,7 @@ abstract class Item: IUsable, ILocatable, IComparable
     public int Y {get; set;}
     public Direction Facing {get; set;}
     public char RepresentWith { get; set; }
+    public ConsoleColor Color {get; set;}
 
     public string Name {get; set;}
 

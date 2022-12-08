@@ -18,11 +18,12 @@ class Orc : Level2Monster {
         this.Wisdom =       11;
         this.Charisma =     10;
         this.HP =           15;
-        this.MaxHP =        15 ;
+        this.MaxHP =        15;
         this.ArmorClass =   15;
         this.Darkvision = true;
         this.EquippedWeapon = new Greataxe("Orcish Greataxe", 12, 1, 3);
         this.ToHit = 5;
+        this.Color = ConsoleColor.Green;
     }
 
 }

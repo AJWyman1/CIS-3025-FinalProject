@@ -22,6 +22,10 @@ abstract class Creature: IMobile, IActionable, IComparable
 	public int GoldPouch { get; protected set;}
     public Weapon EquippedWeapon { get; protected set;}
     public int ToHit { get; protected set; }
+    public ConsoleColor Color {get; set;}
+    public int XP {get; protected set;}
+    public int XPGiven {get; protected set;}
+    public int Level {get; protected set;}
     
     public bool IsAlive {get; protected set; }
 
@@ -126,6 +130,9 @@ abstract class Creature: IMobile, IActionable, IComparable
         this.ToHit = 0;
         this.Inventory = new Container<Item>(2);
         this.IsAlive = true;
+        this.XP = 0;
+        this.XPGiven = 0;
+        this.Level = 0;
     }
 
     public Creature(int X, int Y) : base()
@@ -138,6 +145,24 @@ abstract class Creature: IMobile, IActionable, IComparable
     public void PickUpItem(Item i)
     {
         this.Inventory.Add(i);
+    }
+
+    public void GainXP(int Gained)
+    {
+        this.XP += Gained;
+        do
+        {
+            if (this.XP >= 10)
+            {
+                for(int i = 0; i < this.attributes.Length; i++)
+                {
+                    this.attributes[i] += 1;
+                }
+                this.XP -= 10;
+                this.Level += 1;
+                this.XPGiven += 2;
+            }
+        }while(this.XP >= 10);
     }
 
 
@@ -246,7 +271,6 @@ abstract class Creature: IMobile, IActionable, IComparable
 				return $"{this.Name}({this.HP}/{this.MaxHP}) swings their fists and MISSES {c.Name}({c.HP}/{c.MaxHP})!";
 			}
 		}
-        
 	}    
     public virtual string Defend()
 	{

@@ -11,15 +11,21 @@ class Room {
     public int NumDoors;
     private int FarX;
     private int FarY;
+    public bool Discovered;
+    public PlayerCharacter Hero;
+    public bool isPway;
 
     public Dictionary<(int, int), char> DoorLocations;
 
-    public Room(int X, int Y, int W, int L, int D)
+    public Room(int X, int Y, int W, int L, int D, PlayerCharacter c)
     {
         this.X = X;
         this.Y = Y;
         this.Width = W;
         this.Length = L;
+
+        this.Hero = c;
+        this.Discovered = false;
 
         this.FarX = this.X + this.Width;
         this.FarY = this.Y + this.Length;
@@ -27,111 +33,125 @@ class Room {
         this.NumDoors = D;
         this.DoorLocations = new Dictionary<(int, int), char>();
 
-        this.SetDoorLocations();
+        if (this.Width == 1 && this.Length == 1)
+        {
+            this.isPway = true;
+        }
+        //this.SetDoorLocations();
     }
+
 
     public bool IsInRoom(int Xloc, int Yloc)
     {
-        if (this.FarX > Xloc && this.X < Xloc && this.FarY > Yloc && this.Y < Yloc)
+        if (this.FarX > Xloc && this.X <= Xloc && this.FarY > Yloc && this.Y <= Yloc)
         {
             return true;
         }
-        
+
+        return false;
+    }
+    public bool PlayerInRoom()
+    {
+        if (IsInRoom(this.Hero.X, this.Hero.Y))
+        {
+            this.Discovered = true;
+            return true;
+        }
+        if (this.Width == 1 && this.Length == 1)
+        {
+        if ((X >= Hero.X - 2 && X <= Hero.X + 2) && (Y >= Hero.Y - 2 && Y <= Hero.Y + 2))
+        {
+            this.Discovered = true;
+            return true;
+        }
+        }
         return false;
     }
 
-    public void SetDoorLocations()
+    public void AddDoor(int DoorX, int DoorY)
     {
-        int DoorsSet = 0;
-        do
+        
+        char Repr;
+        if (DoorX == this.X || DoorX == this.X + this.Width - 1)
         {
-            int Side = Dice.D4();
-            int DoorX;
-            int DoorY;
-            char Repr;
-
-            if(Side == 1) //Top
-                {
-                    DoorX = this.X;
-                    DoorY = this.Y + Dice.Roll(this.Length - 2);
-                    Repr ='━';
-                }
-            else if (Side == 2) //Right
-                {
-                    DoorX = this.X + Dice.Roll(this.Width - 2);
-                    DoorY = this.Y + this.Length - 1;
-                    Repr = '┃';
-                }
-            else if(Side == 3) //Bottom
-                {
-                    DoorX = this.X + this.Width - 1;
-                    DoorY = this.Y + Dice.Roll(this.Length - 2);
-                    Repr = '━';
-                }
-            else //Left
-                {
-                    DoorX = this.X + Dice.Roll(this.Width - 2);
-                    DoorY = this.Y;
-                    Repr = '┃';
-                }
-
-            if (!this.DoorLocations.ContainsKey((DoorX,DoorY))) 
-            {
-                this.DoorLocations.Add((DoorX, DoorY), Repr);
-                DoorsSet ++;
-            }
-
-        }while (DoorsSet < this.NumDoors);
+            Repr = '━';
+        }
+        else 
+        {
+            Repr = '┃';
+        }
+        if (this.DoorLocations.ContainsKey((DoorX, DoorY)))
+        {
+            return;
+        }
+        this.DoorLocations.Add((DoorX, DoorY), Repr);
+        // Console.WriteLine($"({this.X}, {this.Y}) ({this.FarX},{this.FarY})  W:{this.Width} L:{this.Length} {DoorX},{DoorY} {Repr}");
+        // char input = Console.ReadKey(true).KeyChar;
     }
 
-    public char[,] Representation()
+    public char[,] Representation(bool Override = false)
     {
         char[,] output = new char[this.Width, this.Length];
+
+        if (this.isPway)
+        {
+            if (this.Discovered || PlayerInRoom() || Override)
+                output[0,0] = '#';
+            else
+                output[0,0] = ' ';
+            return output;
+        }
 
         for(int i = 0; i < this.Width; i++)
         {
             for (int j = 0; j < this.Length; j++)
-            {
-                char draw = '.'; //default
-
-                if (i == 0 || i == this.Width - 1)
+            {   
+                char draw = ' '; //default
+                if (this.PlayerInRoom() || Override)
                 {
-                    draw = '─'; //top and bottom default
+                    draw = '.'; //default
                 }
-                else if (j == 0 || j == this.Length - 1)
+                if (this.Discovered || Override)
                 {
-                    draw = '│'; //left and right default
-                }
+                    if (i == 0 || i == this.Width - 1)
+                    {
+                        draw = '─'; //top and bottom default
+                    }
+                    else if (j == 0 || j == this.Length - 1)
+                    {
+                        draw = '│'; //left and right default
+                    }
+                    
+                    if (i == 0) //top corners
+                    {
+                        if (j == 0)
+                        {
+                            draw = '┌';
+                        }
+                        else if (j == this.Length - 1)
+                        {
+                            draw = '┐';
+                        }
+                    }
+                    
+                    if (i == this.Width - 1) //bottom corners
+                    {
+                        if (j == 0)
+                        {
+                            draw = '└';
+                        }
+                        else if (j == this.Length - 1)
+                        {
+                            draw = '┘';
+                        }
+                    }
                 
-                if (i == 0) //top corners
-                {
-                    if (j == 0)
-                    {
-                        draw = '┌';
-                    }
-                    else if (j == this.Length - 1)
-                    {
-                        draw = '┐';
-                    }
                 }
+                    if (this.DoorLocations.ContainsKey((i + this.X, j + this.Y))) //Doors
+                    {
+                        draw = this.DoorLocations[(i + this.X, j + this.Y)];
+                    }
                 
-                if (i == this.Width - 1) //bottom corners
-                {
-                    if (j == 0)
-                    {
-                        draw = '└';
-                    }
-                    else if (j == this.Length - 1)
-                    {
-                        draw = '┘';
-                    }
-                }
-
-                if (this.DoorLocations.ContainsKey((i + this.X, j + this.Y))) //Doors
-                {
-                    draw = this.DoorLocations[(i + this.X, j + this.Y)];
-                }
-
                 output[i,j] = draw;
             }
         }

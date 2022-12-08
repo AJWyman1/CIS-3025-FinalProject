@@ -21,6 +21,7 @@ class GiantRat : Level1Monster {
         this.MaxHP = 7;
         this.ArmorClass = 12;
         this.Darkvision = true;
+        this.Color = ConsoleColor.DarkMagenta;
     }
 
     public string Bite(Creature c)

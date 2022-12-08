@@ -20,6 +20,7 @@ class PotionOfHealing : Potion
         this.NumDice = 2;
         this.Bonus = 2;
         this.RepresentWith = 'p';
+        this.Color = ConsoleColor.Magenta;
     }
 
     public PotionOfHealing(string name, int s, int d, int b) //Health pot customization

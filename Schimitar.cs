@@ -17,6 +17,7 @@ class Schimitar : Weapon
         this.NumDice = 1;
         this.Bonus = 0;
         this.RepresentWith = 'c';
+        this.Color = ConsoleColor.DarkYellow;
     }
 
     public Schimitar (string name, int s, int d, int b) 
@@ -29,6 +30,7 @@ class Schimitar : Weapon
         this.NumDice = d;
         this.Bonus = b;
         this.RepresentWith = 'c';
+        this.Color = ConsoleColor.DarkYellow;
     }
     
 }

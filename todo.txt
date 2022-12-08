@@ -1,3 +1,22 @@
+Stairs 
+	-Spawn
+	-Interaction
+level 1, 2, 3
+	-Creation
+		-mobs
+	-Respawn
+Rooms
+	-Print '.''s when player in room only
+
+inventory mngmt?
+
+
+
+
+
+
+
+
 **** Required ****
 
 Item

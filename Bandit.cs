@@ -23,5 +23,6 @@ class Bandit : Level1Monster {
         this.Darkvision = false;
         this.ToHit = 3;
         this.EquippedWeapon = new Schimitar();
+        this.Color = ConsoleColor.Magenta;
     }
 }

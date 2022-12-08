@@ -23,6 +23,7 @@ class Mimic : Level3Monster {
         this.ArmorClass = 12;
         this.Darkvision = true;
         this.falseForm = true;
+        this.Color = ConsoleColor.Yellow;
     }
 
     

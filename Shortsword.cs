@@ -17,6 +17,7 @@ class Shortsword : Weapon
         this.NumDice = 1;
         this.Bonus = 0;
         this.RepresentWith = 's';
+        this.Color = ConsoleColor.DarkYellow;
     }
 
     public Shortsword (string name, int s, int d, int b) 
@@ -29,6 +30,7 @@ class Shortsword : Weapon
         this.NumDice = d;
         this.Bonus = b;
         this.RepresentWith = 's';
+        this.Color = ConsoleColor.DarkYellow;
     }
 
     

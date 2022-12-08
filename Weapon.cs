@@ -17,6 +17,7 @@ abstract class Weapon : Item
     {
         this.UsesLeft = 10000;
         this.UseChance = 1.0f;
+        this.Color = ConsoleColor.DarkYellow;
     }
     
     public override string SuccessMessage()

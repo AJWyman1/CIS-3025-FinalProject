@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 abstract class Level3Monster : Creature {
 
-    public int XP { get; protected set; }
     public Level3Monster()
     {
         this.GoldPouch = Dice.Roll(3, 20);
         this.Inventory = new Container<Item>(5);
-        this.XP = 300;
+        this.XPGiven = 50;
     }
 }

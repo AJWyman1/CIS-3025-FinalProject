@@ -23,6 +23,7 @@ class Hobgoblin : Level2Monster {
         this.Darkvision = true;
         this.EquippedWeapon = new Longsword("Hobgoblin Longsword",10, 1, 1);
         this.ToHit = 3;
+        this.Color = ConsoleColor.Red;
     }
 
 }

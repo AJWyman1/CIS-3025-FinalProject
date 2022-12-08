@@ -17,6 +17,7 @@ class Longsword : Weapon
         this.NumDice = 1;
         this.Bonus = 0;
         this.RepresentWith = 'l';
+        this.Color = ConsoleColor.DarkYellow;
     }
 
     public Longsword (string name, int s, int d, int b) 
@@ -30,6 +31,7 @@ class Longsword : Weapon
         this.NumDice = d;
         this.Bonus = b;
         this.RepresentWith = 'l';
+        this.Color = ConsoleColor.DarkYellow;
     }
     
 }

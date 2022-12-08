@@ -37,6 +37,7 @@ class PlayerCharacter : Creature {
 		this.MaxHP = this.HP;
 		this.GoldPouch = 50;
 		this.ArmorClass = 10 + this.AbilityModifier(this.Dexterity);
+		this.Color = ConsoleColor.Blue;
 	}
 
 	public PlayerCharacter(Race playerRace, Class playerClass, string playerName, int[] stats)
@@ -56,6 +57,7 @@ class PlayerCharacter : Creature {
 		this.MaxHP = this.HP;
 		this.GoldPouch = 50;
 		this.ArmorClass = 10 + this.AbilityModifier(this.Dexterity);
+		this.Color = ConsoleColor.Blue;
 	}
 
 	public override string Attack(Creature c)
@@ -509,7 +511,7 @@ class PlayerCharacter : Creature {
 	public override string ToString()
     {
         string output =
-            this.Name +
+            this.Name + " " + "Level " + this.Level + " " + this.PlayerClass + 
             "\n============" +
             "\nSTR: " + this.Strength +
             "\nDEX: " + this.Dexterity +
