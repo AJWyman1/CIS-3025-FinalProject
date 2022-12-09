@@ -154,15 +154,20 @@ abstract class Creature: IMobile, IActionable, IComparable
         {
             if (this.XP >= 10)
             {
-                for(int i = 0; i < this.attributes.Length; i++)
+                this.LevelUp();
+            }
+        }while(this.XP >= 10);
+    }
+
+    public virtual void LevelUp()
+    {
+        for(int i = 0; i < this.attributes.Length; i++)
                 {
                     this.attributes[i] += 1;
                 }
                 this.XP -= 10;
                 this.Level += 1;
                 this.XPGiven += 2;
-            }
-        }while(this.XP >= 10);
     }
 
 

@@ -18,6 +18,7 @@ class Dungeon
     public int Width;
     public int Length;
     private bool MapFinalized;
+    public string[] MessageHistory;
 
     public Dungeon(PlayerCharacter c, int X = 60, int Y = 60, int Rooms = 10)
     {
@@ -51,7 +52,28 @@ class Dungeon
         this.EmptyMap = (char[,])this.Map.Clone();
         this.MonsterDict = new Dictionary<(int, int), Creature>();
         this.LootDict = new Dictionary<(int, int), Dictionary<Item, int>>(); //Dictionary of Loot on floor of the dungeon Dict( X, Y : Dict(Item : NumOfType))
+        this.MessageHistory = new string[5]{"0","1","2","3","4"};
+    }
 
+    public void NewMessage(string Message)
+    {
+        for (int i = 1; i < this.MessageHistory.Length; i++)
+        {
+            this.MessageHistory[i - 1] = this.MessageHistory[i];
+        }
+        this.MessageHistory[this.MessageHistory.Length - 1] = Message;
+
+        this.PrintMessageHistory();
+    }
+
+    public void PrintMessageHistory()
+    {
+        Console.SetCursorPosition(0, this.Length);
+        for (int i = 0; i < this.MessageHistory.Length; i++)
+        {
+            //Console.SetCursorPosition(0, this.Length + i);
+            Console.WriteLine(this.MessageHistory[i].PadRight(this.Width));
+        }
     }
 
     public void FillMap()
@@ -159,60 +181,76 @@ class Dungeon
             return;
         }
         
-        Creature[] fighters = { a, b };
-        Array.Sort(fighters);
-        Array.Reverse(fighters);
+        //Creature[] fighters = { a, b };
+        //Array.Sort(fighters);
+        //Array.Reverse(fighters);
         Console.SetCursorPosition(0, this.Length);
         if (a is PlayerCharacter || b is PlayerCharacter)
         {
             if(a.RepresentWith == 'C')
             {
-                Console.WriteLine("As you reach to see what treasures are locked away...".PadRight(Console.WindowWidth));
-                Console.WriteLine($"{a.Attack(b).PadRight(Console.WindowWidth)}");
+                // Console.WriteLine("As you reach to see what treasures are locked away...".PadRight(Console.WindowWidth));
+                // Console.WriteLine($"{a.Attack(b).PadRight(Console.WindowWidth)}");
+
+                this.NewMessage("As you reach to see what treasures are locked away...");
+                this.NewMessage(a.Attack(b));
+                this.PrintMessageHistory();
                 return;
             }
             if(b.RepresentWith == 'C')
             {
-                Console.WriteLine("As you reach to see what treasures are locked away...".PadRight(Console.WindowWidth));
-                Console.WriteLine($"{b.Attack(a).PadRight(Console.WindowWidth)}");
+                // Console.WriteLine("As you reach to see what treasures are locked away...".PadRight(Console.WindowWidth));
+                // Console.WriteLine($"{b.Attack(a).PadRight(Console.WindowWidth)}");
+
+                this.NewMessage("As you reach to see what treasures are locked away...");
+                this.NewMessage(b.Attack(a));
+                this.PrintMessageHistory();
                 return;
             }
 
-            Console.WriteLine($"{fighters[0].Attack(fighters[1]).PadRight(Console.WindowWidth)}");
-            if (fighters[1].HP > 0) //Benefit of higher initiative
-            {
-                Console.WriteLine($"{fighters[1].Attack(fighters[0]).PadRight(Console.WindowWidth)}");
-            }
-            else
-            {
-                fighters[0].GainXP(fighters[1].XPGiven);
-                // Console.SetCursorPosition(0, this.Length + 1);
-                // Console.WriteLine($"{fighters[0]} gained {fighters[1].XPGiven} XP! And is now level {fighters[0].Level}!".PadRight(Console.WindowWidth));
-                //Console.WriteLine("".PadRight(Console.WindowWidth));
-            }
-            if (fighters[0].HP <= 0)
-            {
-                fighters[1].GainXP(fighters[0].XPGiven);
-                // Console.SetCursorPosition(0, this.Length + 2);
-                // Console.WriteLine($"{fighters[1]} gained {fighters[0].XPGiven} XP! And is now level {fighters[1].Level}!".PadRight(Console.WindowWidth));
-                //Console.WriteLine("".PadRight(Console.WindowWidth));
-            }
+            // Console.WriteLine($"{fighters[0].Attack(fighters[1]).PadRight(Console.WindowWidth)}");
+            this.NewMessage(a.Attack(b));
+            // if (fighters[1].HP > 0) //Benefit of higher initiative
+            // {
+            //     // Console.WriteLine($"{fighters[1].Attack(fighters[0]).PadRight(Console.WindowWidth)}");
+            //     this.NewMessage(fighters[1].Attack(fighters[0]));
+            // }
+            // else
+            // {
+            //     fighters[0].GainXP(fighters[1].XPGiven);
+            //     // Console.SetCursorPosition(0, this.Length + 1);
+            //     // Console.WriteLine($"{fighters[0]} gained {fighters[1].XPGiven} XP! And is now level {fighters[0].Level}!".PadRight(Console.WindowWidth));
+            //     //Console.WriteLine("".PadRight(Console.WindowWidth));
+            // }
+            // if (fighters[0].HP <= 0)
+            // {
+            //     fighters[1].GainXP(fighters[0].XPGiven);
+            //     // Console.SetCursorPosition(0, this.Length + 2);
+            //     // Console.WriteLine($"{fighters[1]} gained {fighters[0].XPGiven} XP! And is now level {fighters[1].Level}!".PadRight(Console.WindowWidth));
+            //     //Console.WriteLine("".PadRight(Console.WindowWidth));
+            // }
             this.PostFightUpdate(a);
             this.PostFightUpdate(b);
         }
         else
         {
-            fighters[0].Attack(fighters[1]);
-            if (fighters[1].HP > 0) //Benefit of higher initiative
-            {
-                fighters[1].Attack(fighters[0]);
-            }
+            a.Attack(b);
+            
+            this.NewMessage("You hear fighting in the distance");
             
             this.PostFightUpdate(a);
             this.PostFightUpdate(b);
-            Console.SetCursorPosition(0, this.Length);
-            Console.WriteLine("You hear fighting in the distance".PadRight(Console.WindowWidth));
+            
         }
+        if (b.HP <= 0) //XP gain
+            {
+                if (a is PlayerCharacter)
+                {
+                    this.NewMessage($"{a.Name} gains {b.XPGiven} XP!");
+                }
+                a.GainXP(b.XPGiven);
+                //fighters[1].Attack(fighters[0]);
+            }
     }
 
     public void ClearMessages()
@@ -222,6 +260,8 @@ class Dungeon
         Console.WriteLine("".PadRight(Console.WindowWidth));
         Console.WriteLine("".PadRight(Console.WindowWidth));
         Console.WriteLine("".PadRight(Console.WindowWidth));
+
+        this.PrintMessageHistory();
     }
     
     public void PostFightUpdate(Creature c)
@@ -365,6 +405,10 @@ class Dungeon
 
     public ConsoleKeyInfo PlayerTurn()
     {
+        if(this.Hero.HP <= 0)
+        {
+            return default(ConsoleKeyInfo);
+        }
         
         ConsoleKeyInfo keyInfo;
         Console.SetCursorPosition(0, Console.WindowHeight - 20);

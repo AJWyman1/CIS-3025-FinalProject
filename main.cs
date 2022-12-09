@@ -62,11 +62,11 @@ class Program
 
         for (int i = 0; i < 15; i++)
         {
-            d.PlaceCreatureInRoom(new GiantRat());
+            d.PlaceCreatureInRoom(new Mimic());
         }
         for (int i = 0; i < 15; i++)
         {
-            d.PlaceCreatureInRoom(new Bandit());
+            d.PlaceCreatureInRoom(new Mimic());
         }
         c.RollInitiative();
         Console.Clear();
@@ -85,9 +85,8 @@ class Program
         } while (keyInfo.Key != ConsoleKey.Escape && c.HP > 0);
         if(c.HP <= 0)
         {
-            Console.SetCursorPosition(0, Console.WindowHeight - 20);
-            Console.WriteLine($"YOU DIED{new String(' ', Console.BufferWidth / 2)}");
-            }
+            d.NewMessage("YOU DIED");    
+        }
     
     }
     

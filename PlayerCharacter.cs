@@ -60,6 +60,19 @@ class PlayerCharacter : Creature {
 		this.Color = ConsoleColor.Blue;
 	}
 
+	public override void LevelUp()
+	{
+		for(int i = 0; i < this.attributes.Length; i++)
+                {
+                    this.attributes[i] += 1;
+                }
+                this.XP -= 10;
+                this.Level += 1;
+                this.XPGiven += 2;
+				this.MaxHP = this.HitDie + AbilityModifier(this.Constitution);
+				this.ArmorClass = 10 + this.AbilityModifier(this.Dexterity);
+	}
+
 	public override string Attack(Creature c)
 	{
 		int Damage;
@@ -520,7 +533,7 @@ class PlayerCharacter : Creature {
             "\nWIS: " + this.Wisdom +
             "\nCHA: " + this.Charisma +
             "\n============" +
-            "\nHP: " + this.HP +
+            "\nHP: " + this.HP + "/" +this.MaxHP +
             "\nAC: " + this.ArmorClass  +
             "\n============" +
             "\nResistances: \n" + 
