@@ -16,6 +16,7 @@ class Greataxe : Weapon
         this.Sides = 12;
         this.NumDice = 1;
         this.Bonus = 0;
+        this.RepresentWith = 'g';
     }
     public Greataxe (string name, int s, int d, int b) 
     {
@@ -26,5 +27,6 @@ class Greataxe : Weapon
         this.Sides = s;
         this.NumDice = d;
         this.Bonus = b;
+        this.RepresentWith = 'g';
     }
 }

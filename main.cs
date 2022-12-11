@@ -14,11 +14,9 @@ class Program
         {
             Console.Clear();
             PlayerCharacter Larry = new PlayerCharacter(ChooseRace(), SelectClass(), SetPlayerName(), ChooseStats());
-            Larry.EquipWeapon(new Greataxe());
 
             PotionOfHealing HealthPot = new PotionOfHealing();
 
-            Larry.PickUpItem(new Schimitar());
             Larry.PickUpItem(HealthPot);
 
             PotionOfHealing HealthPot2 = new PotionOfHealing();
@@ -36,12 +34,10 @@ class Program
         }else if (input == 'r')
         {
             Console.Clear();
-            PlayerCharacter Larry = new PlayerCharacter(Race.HalfOrc, Class.Barbarian, "Larry", new int[]{99,99,99,99,99,99});
-            Larry.EquipWeapon(new Greataxe());
+            PlayerCharacter Larry = new PlayerCharacter(Race.HalfOrc, Class.Monk, "Larry");
 
             PotionOfHealing HealthPot = new PotionOfHealing();
 
-            Larry.PickUpItem(new Schimitar());
             Larry.PickUpItem(HealthPot);
 
             PotionOfHealing HealthPot2 = new PotionOfHealing();
@@ -53,39 +49,29 @@ class Program
 
     public static void Game(PlayerCharacter c)
     {
-        Dungeon d = new Dungeon(c, Console.WindowHeight - 20, Console.WindowWidth - 45);
+        Dungeon d1 = new Dungeon(c, Console.WindowHeight - 20, Console.WindowWidth - 45, 3);
 
-        d.PlaceHeroInRoom(c);
+        d1.PlaceHeroInRoom(c);
         Console.Clear();
 
-        
-
-        for (int i = 0; i < 15; i++)
-        {
-            d.PlaceCreatureInRoom(new Mimic());
-        }
-        for (int i = 0; i < 15; i++)
-        {
-            d.PlaceCreatureInRoom(new Mimic());
-        }
         c.RollInitiative();
         Console.Clear();
-        d.PrintMap();
+        d1.PrintMap();
 
-        ConsoleKeyInfo keyInfo;
+        ConsoleKey key;
         do
         {
             
-            d.PrintCharSheet(c);
+            d1.PrintCharSheet(c);
             //d.PrintMap();
-            keyInfo = d.MonsterTurn();
+            key = d1.MonsterTurn();
             
             
             
-        } while (keyInfo.Key != ConsoleKey.Escape && c.HP > 0);
+        } while (key != ConsoleKey.Escape && c.HP > 0);
         if(c.HP <= 0)
         {
-            d.NewMessage("YOU DIED");    
+            d1.NewMessage("YOU DIED");    
         }
     
     }

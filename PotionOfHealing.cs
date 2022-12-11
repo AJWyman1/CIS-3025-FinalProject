@@ -52,8 +52,13 @@ class PotionOfHealing : Potion
         if (this.UsesLeft > 0)
         {
             this.UsesLeft -= 1;
-            this.Name = "Empty " + this.Name;
-            return c.Heal(this.Heal());
+            //this.Name = "Empty " + this.Name;
+
+            
+            int healed = this.Heal();
+            c.Heal(healed);
+            
+            return $"{c.Name} drank the {this.Name} and regained {healed} HP!";
         }
         return "This Potion is empty";
     }

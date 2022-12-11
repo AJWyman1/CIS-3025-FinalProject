@@ -26,7 +26,7 @@ class PlayerCharacter : Creature {
 		this.Resistances = "";
 		this.Proficiencies = "";
 		this.RepresentWith = '@';
-		this.Inventory = new Container<Item>();
+		this.Inventory = new Container<Item>(9);
 		this.SetName();
 		this.ChooseRace();
 		this.ChooseStats();
@@ -45,7 +45,7 @@ class PlayerCharacter : Creature {
 		this.Resistances = "";
 		this.Proficiencies = "";
 		this.RepresentWith = '@';
-		this.Inventory = new Container<Item>();
+		this.Inventory = new Container<Item>(9);
 		this.Name = playerName;
 		this.PlayerRace = playerRace;
 		this.attributes = stats;
@@ -58,6 +58,26 @@ class PlayerCharacter : Creature {
 		this.GoldPouch = 50;
 		this.ArmorClass = 10 + this.AbilityModifier(this.Dexterity);
 		this.Color = ConsoleColor.Blue;
+	}
+
+	public PlayerCharacter(Race playerRace, Class playerClass, string playerName)
+	{
+		this.Resistances = "";
+		this.Proficiencies = "";
+		this.RepresentWith = '@';
+		this.Inventory = new Container<Item>(9);
+		this.Name = playerName;
+		this.PlayerRace = playerRace;
+		this.AddRacialModifiers();
+		this.PlayerClass = playerClass;
+		this.SetClassProficiencies();
+		this.SetHitDie();
+		this.HP += this.HitDie + AbilityModifier(this.Constitution);
+		this.MaxHP = this.HP;
+		this.GoldPouch = 50;
+		this.ArmorClass = 10 + this.AbilityModifier(this.Dexterity);
+		this.Color = ConsoleColor.Blue;
+		this.ClassStatsAndInventory();
 	}
 
 	public override void LevelUp()
@@ -160,6 +180,173 @@ class PlayerCharacter : Creature {
 	{
 		Console.WriteLine("What is your Character's name?");
 		this.Name = Console.ReadLine();
+	}
+
+	public void ClassStatsAndInventory()
+	{
+		int[] Rolls = {Dice.DropAndSum(), Dice.DropAndSum(), Dice.DropAndSum(), Dice.DropAndSum(), Dice.DropAndSum(), Dice.DropAndSum()};
+		Array.Sort(Rolls);
+		Array.Reverse(Rolls);
+
+		if (this.PlayerClass == Class.Barbarian)
+		{
+			this.EquipWeapon(new Greataxe());
+
+			this.Strength = Rolls[0];
+			this.Constitution = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Bard)
+		{
+			this.EquipWeapon(new Rapier());
+
+			this.Charisma = Rolls[0];
+			this.Dexterity = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Cleric)
+		{
+			this.EquipWeapon(new Mace());
+
+			this.Wisdom = Rolls[0];
+
+			if (Dice.D4() > 2)
+			{
+				this.Strength = Rolls[1];
+				this.Constitution = Rolls[2];
+			}else
+			{
+				this.Strength = Rolls[2];
+				this.Constitution = Rolls[1];
+			}
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+			Rolls[2] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Druid)
+		{
+			this.EquipWeapon(new Schimitar());
+
+			this.Wisdom = Rolls[0];
+			this.Constitution = Rolls[1];
+
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Fighter)
+		{
+			this.EquipWeapon(new Longsword());
+
+			this.Strength = Rolls[0];
+			this.Constitution = Rolls[1];
+			this.Dexterity = Rolls[2];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+			Rolls[2] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Monk)
+		{
+			this.EquipWeapon(new Shortsword());
+
+			this.Dexterity = Rolls[0];
+			this.Wisdom = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Paladin)
+		{
+			this.EquipWeapon(new Longsword());
+
+			this.Strength = Rolls[0];
+			this.Charisma = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Ranger)
+		{
+			this.EquipWeapon(new Shortsword());
+
+			this.Dexterity = Rolls[0];
+			this.Wisdom = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Rogue)
+		{
+			this.EquipWeapon(new Rapier());
+
+			this.Dexterity = Rolls[0];
+			this.Intelligence = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Sorcerer)
+		{
+			this.EquipWeapon(new Quarterstaff());
+
+			this.Charisma = Rolls[0];
+			this.Constitution = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Warlock)
+		{
+			this.EquipWeapon(new Quarterstaff());
+
+			this.Charisma = Rolls[0];
+			this.Constitution = Rolls[1];
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+		}
+		else
+		if (this.PlayerClass == Class.Wizard)
+		{
+			this.EquipWeapon(new Quarterstaff());
+
+			this.Intelligence = Rolls[0];
+
+			if (Dice.D4() > 2)
+			{
+				this.Dexterity = Rolls[1];
+				this.Constitution = Rolls[2];
+			}else
+			{
+				this.Constitution = Rolls[1];
+				this.Dexterity = Rolls[2];
+			}
+			Rolls[0] = 0;
+			Rolls[1] = 0;
+			Rolls[2] = 0;
+		}
+
+		for(int i = 0; i < Rolls.Length; i++)
+		{
+			if (Rolls[i] != 0)
+			{
+				bool Assigned = false;
+				do
+				{
+					int Stat = Dice.D6() - 1;
+					if (this.attributes[Stat] == 0)
+					{
+						this.attributes[Stat] = Rolls[i];
+						Assigned = true;
+					}
+				}while(!Assigned);
+			}
+		}
 	}
 
 	public void ChooseStats()

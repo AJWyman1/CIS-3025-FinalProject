@@ -6,9 +6,9 @@ class Room {
 
     public int X;
     public int Y;
+    public int DungeonLevel;
     public int Width;
     public int Length;
-    public int NumDoors;
     private int FarX;
     private int FarY;
     public bool Discovered;
@@ -16,13 +16,15 @@ class Room {
     public bool isPway;
 
     public Dictionary<(int, int), char> DoorLocations;
+    public Dictionary<(int, int), Stairs> StairLocations;
 
-    public Room(int X, int Y, int W, int L, int D, PlayerCharacter c)
+    public Room(int X, int Y, int W, int L, PlayerCharacter c, int Level)
     {
         this.X = X;
         this.Y = Y;
         this.Width = W;
         this.Length = L;
+        this.DungeonLevel = Level;
 
         this.Hero = c;
         this.Discovered = false;
@@ -30,8 +32,8 @@ class Room {
         this.FarX = this.X + this.Width;
         this.FarY = this.Y + this.Length;
 
-        this.NumDoors = D;
         this.DoorLocations = new Dictionary<(int, int), char>();
+        this.StairLocations = new Dictionary<(int, int), Stairs>();
 
         if (this.Width == 1 && this.Length == 1)
         {
@@ -41,9 +43,9 @@ class Room {
     }
 
 
-    public bool IsInRoom(int Xloc, int Yloc)
+    public bool IsInRoom(int Xloc, int Yloc, int Level)
     {
-        if (this.FarX > Xloc && this.X <= Xloc && this.FarY > Yloc && this.Y <= Yloc)
+        if (this.FarX > Xloc && this.X <= Xloc && this.FarY > Yloc && this.Y <= Yloc && this.DungeonLevel == Level)
         {
             return true;
         }
@@ -52,18 +54,18 @@ class Room {
     }
     public bool PlayerInRoom()
     {
-        if (IsInRoom(this.Hero.X, this.Hero.Y))
+        if (IsInRoom(this.Hero.X, this.Hero.Y, this.Hero.DungeonLevel))
         {
             this.Discovered = true;
             return true;
         }
         if (this.Width == 1 && this.Length == 1)
         {
-        if ((X >= Hero.X - 2 && X <= Hero.X + 2) && (Y >= Hero.Y - 2 && Y <= Hero.Y + 2))
-        {
-            this.Discovered = true;
-            return true;
-        }
+            if ((X >= Hero.X - 2 && X <= Hero.X + 2) && (Y >= Hero.Y - 2 && Y <= Hero.Y + 2) && this.DungeonLevel == Hero.DungeonLevel)
+            {
+                this.Discovered = true;
+                return true;
+            }
         }
         return false;
     }
@@ -85,8 +87,11 @@ class Room {
             return;
         }
         this.DoorLocations.Add((DoorX, DoorY), Repr);
-        // Console.WriteLine($"({this.X}, {this.Y}) ({this.FarX},{this.FarY})  W:{this.Width} L:{this.Length} {DoorX},{DoorY} {Repr}");
-        // char input = Console.ReadKey(true).KeyChar;
+    }
+
+    public void AddStairs(int X, int Y, bool Down)
+    {
+        this.StairLocations.Add((X, Y), new Stairs(X, Y, Down));
     }
 
     public char[,] Representation(bool Override = false)
@@ -150,6 +155,10 @@ class Room {
                     if (this.DoorLocations.ContainsKey((i + this.X, j + this.Y))) //Doors
                     {
                         draw = this.DoorLocations[(i + this.X, j + this.Y)];
+                    }
+                    if (this.StairLocations.ContainsKey((i + this.X, j + this.Y))) //Stairs
+                    {
+                        draw = this.StairLocations[(i + this.X, j + this.Y)].RepresentWith;
                     }
                 
                 output[i,j] = draw;

@@ -26,6 +26,7 @@ abstract class Creature: IMobile, IActionable, IComparable
     public int XP {get; protected set;}
     public int XPGiven {get; protected set;}
     public int Level {get; protected set;}
+    public int DungeonLevel {get; set;}
     
     public bool IsAlive {get; protected set; }
 
@@ -133,6 +134,7 @@ abstract class Creature: IMobile, IActionable, IComparable
         this.XP = 0;
         this.XPGiven = 0;
         this.Level = 0;
+        this.DungeonLevel = 0;
     }
 
     public Creature(int X, int Y) : base()
