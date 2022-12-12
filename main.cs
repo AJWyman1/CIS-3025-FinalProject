@@ -35,8 +35,8 @@ class Program
         }else if (input == 'r')
         {
             Console.Clear();
-            PlayerCharacter Larry = new PlayerCharacter(Race.HalfOrc, Class.Paladin, "Larry");
-
+            PlayerCharacter Larry = new PlayerCharacter(Race.HalfOrc, Class.Barbarian, "Test Subject #5", new int[]{25,25,25,25,25,25});
+			Larry.EquipWeapon(new Greataxe("Humongous Axe", 12, 2, 5));
             PotionOfHealing HealthPot = new PotionOfHealing();
 
             Larry.PickUpItem(HealthPot);

@@ -52,7 +52,6 @@ class Dungeon
                 this.EmptyMap = (char[,,])this.Map.Clone();
                 this.MonsterDict = new Dictionary<(int, int, int), Creature>();
             }
-            this.DebugPrint(1,1,1);
             this.Stairs(this.CurrentLevel, this.Rooms[this.CurrentLevel][Dice.Roll(this.Rooms[this.CurrentLevel].Length -1)], true); // Add random Downstairs
             this.CurrentLevel += 1;
         }
@@ -844,6 +843,7 @@ class Dungeon
         int width = Console.WindowWidth;
         int height = Console.WindowHeight;
         string[] charsheet = c.ToString().Split('\n');
+        Console.ForegroundColor = ConsoleColor.White;
         for (int i = 0; i < charsheet.Length; i++)
         {
             Console.SetCursorPosition(width - 45, i);
@@ -986,6 +986,7 @@ class Dungeon
                 for (int j = 0; j < this.Map.GetLength(1); j++)
                 {
                     Console.SetCursorPosition(j, i);
+                    Console.ForegroundColor = ConsoleColor.White;
                     char CharToWrite = ' ';
                     if ((this.GetRoom(i, j, this.CurrentLevel) != null && !this.GetRoom(i, j, this.CurrentLevel).PlayerInRoom() && this.GetRoom(i, j, this.CurrentLevel).Discovered))
                     {
@@ -1010,7 +1011,7 @@ class Dungeon
                         Console.ForegroundColor = ConsoleColor.DarkGray;
                     }
                     Console.Write(CharToWrite);
-                    Console.ForegroundColor = default(ConsoleColor);
+                    
                 }
                 Console.Write("\n");
             }

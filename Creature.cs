@@ -459,6 +459,6 @@ abstract class Creature: IMobile, IActionable, IComparable
     {
         this.HP += h;
 		if (this.HP > this.MaxHP){this.HP = this.MaxHP;} //
-		return $"{this.Name} regained {h} hit points and is currently {this.HP}/{this.MaxHP}";
+		return $"{this.Name} 1";
     }
 }
