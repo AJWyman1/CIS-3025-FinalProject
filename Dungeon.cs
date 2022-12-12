@@ -97,6 +97,7 @@ class Dungeon
 
     public void PrintMessageHistory()
     {
+        Console.ForegroundColor = ConsoleColor.White;
         Console.SetCursorPosition(0, this.Length);
         for (int i = 0; i < this.MessageHistory.Length; i++)
         {

@@ -35,20 +35,25 @@ Inspired by NetHack and D&D
     - Customize Species and Class
     - Sets Attributes based on Class
     - Starting weapon based on Class
-
+- Visuals
+    - colors for all dungeon inhabitants, loot, and doors
+    - Unable to see inside rooms unless inside
+    - See pathway ahead
+    - Room walls, doors, stairs visible after player discovers the room
 ---
 
 ---
 ### ToDo
 
-
+- Optimization 
 - Replay option after death   
 - Respawn chance for enemies    
 - Name your weapon  
 - More Items
     - Armor
     - Shields     
-
+- Sneak skill
+    - Alert mobs at varying range depending on sneak
 - Dual wield/off hand equipment  
 - Class skills   
 - End game screen  
