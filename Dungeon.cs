@@ -43,28 +43,23 @@ class Dungeon
         this.CreateRooms(1, 0);
         for (int i = 0; i < 2; i++)
         {
-            Console.WriteLine(i);
             this.CreateRooms(this.Rooms[this.CurrentLevel].Length);
             this.EmptyMap = (char[,,])this.Map.Clone();
             while (!this.Navigatable())
             {
-                this.UpdateAllRooms(true);
+                //this.UpdateAllRooms(true);
                 this.CreatePasageways(2);
                 this.EmptyMap = (char[,,])this.Map.Clone();
                 this.MonsterDict = new Dictionary<(int, int, int), Creature>();
             }
-            Console.WriteLine("Navigatable " + i);
-            this.DebugPrint(0, 0, this.CurrentLevel);
-
+            this.DebugPrint(1,1,1);
             this.Stairs(this.CurrentLevel, this.Rooms[this.CurrentLevel][Dice.Roll(this.Rooms[this.CurrentLevel].Length -1)], true); // Add random Downstairs
-            Console.WriteLine("Stairs");
             this.CurrentLevel += 1;
         }
 
         this.CurrentLevel = 0;
 
         this.MapFinalized = true;
-        //this.Stairs();
         this.UpdateAllRooms(true);
 
         this.EmptyMap = (char[,,])this.Map.Clone();
@@ -162,47 +157,63 @@ class Dungeon
         int X = StairRoom.X;
         int Y = StairRoom.Y;
 
-        X += Dice.Roll(StairRoom.Width - 1);
-        Y += Dice.Roll(StairRoom.Length - 1);
+        X += Dice.Roll(StairRoom.Width - 2);
+        Y += Dice.Roll(StairRoom.Length - 2);
 
         StairRoom.AddStairs(X, Y, Down);
 
         if (Down)
         {
             this.Map[X, Y, Level] = '<';
-            Console.WriteLine($"down stairs created at {X}, {Y}");
             this.CreateRoomContaining(X, Y, Level + 1);
-            Console.WriteLine("Containing room made");
         }else
         {
             this.Map[X, Y, Level] = '>';
         }
     }
 
-    public void CreateRoomContaining(int ContainsY, int ContainsX, int Level)
+    public void CreateRoomContaining(int ContainsX, int ContainsY, int Level)
     {
+        
+
         int width = Dice.Roll(10) + 5;
         int length = Dice.Roll(10) + 5;
         
         int X = ContainsX - length/2;
         int Y = ContainsY - width/2;
-        while(X + length > this.Width || Y + width > this.Length)
-        {
-            width = Dice.Roll(5) + 5;
-            length = Dice.Roll(5) + 5;
+        bool DoesntContain = true;
+
+        do{
+            X = Dice.Roll(this.Map.GetLength(0) - 2);
+            Y = Dice.Roll(this.Map.GetLength(1) - 2);
+
+            width = Dice.Roll(10) + 5;
+            length = Dice.Roll(10) + 5;
+
+            if (((width + X + 1) < this.Map.GetLength(0)) && ((length + Y + 1) < this.Map.GetLength(1)))
+            {
+                Room r = new Room(X, Y, width, length, this.Hero, Level);
+                DoesntContain = !r.IsInRoom(ContainsX, ContainsY, Level);
+            }
+        }while(DoesntContain);
+
+        // while(X + length >= this.Map.GetLength(0) - 2 || Y + width >= this.Map.GetLength(1) - 2)
+        // {
+        //     width = Dice.Roll(15) + 5;
+        //     length = Dice.Roll(15) + 5;
                 
-            X = ContainsX - width/2;
-            Y = ContainsY - length/2;
-            
-            Console.WriteLine($"Attempting {width}x{length} at ({X}, {Y}) .     Max {this.Width} {this.Length}");
-        }
-        this.Rooms[Level][0] = new Room(Y, X, width, length, this.Hero, Level);
+        //     X = ContainsX - width/2 + width/4;
+        //     Y = ContainsY - length/2 + length/4;
+        //     Console.WriteLine($"Room at ({X}, {Y}) contains ({ContainsX}, {ContainsY})");
+        // }
+
+        this.Rooms[Level][0] = new Room(X, Y, width, length, this.Hero, Level);
         this.RoomDict.Add((X, Y, Level), this.Rooms[Level][0]);
+
         UpdateMap(this.Rooms[Level][0], Level, true);
 
-        this.Stairs(Level, this.Rooms[Level][0], false, ContainsY, ContainsX);
+        this.Stairs(Level, this.Rooms[Level][0], false, ContainsX, ContainsY);
         this.UpdateAllRooms();
-        this.DebugPrint(0, 0 , Level);
     }
 
     public void Stairs(int Level, Room StairRoom, Boolean Down, int X, int Y)
@@ -249,18 +260,18 @@ class Dungeon
             }
             else if (Level == 1)
             {
-                MonsterRoll = Dice.Roll(17) + 2;
+                MonsterRoll = Dice.Roll(13) + 6;
             }
             else
             {
                 MonsterRoll = 20;
             }
 
-            if (MonsterRoll <= 3)
+            if (MonsterRoll <= 5)
             {
                 this.MonsterDict.Add((X, Y, Level), new GiantRat());
             }
-            else if (MonsterRoll <= 7)
+            else if (MonsterRoll <= 9)
             {
                 this.MonsterDict.Add((X, Y, Level), new Bandit());
             }
@@ -417,6 +428,45 @@ class Dungeon
             if (c.EquippedWeapon != null)
             {
                 this.AddToLootDict(c.EquippedWeapon, c.X, c.Y, c.DungeonLevel);
+            }
+
+            if (c is Level1Monster)
+            {
+                int Drop = Dice.D10();
+                if(Drop < 2)
+                {
+
+                }else
+                if (Drop < 6)
+                {
+                    this.AddToLootDict(new Food((FoodTypes)(Dice.D4())), c.X, c.Y, c.DungeonLevel);
+                }
+                else
+                {
+                    this.AddToLootDict(new Food((FoodTypes)(Dice.D6())), c.X, c.Y, c.DungeonLevel);
+                }
+            }
+            else
+            if (c is Level2Monster)
+            {
+                if (Dice.D10() > 5)
+                {
+                    this.AddToLootDict(new Food((FoodTypes)(Dice.D8()+2)), c.X, c.Y, c.DungeonLevel);
+                }else
+                {
+                    this.AddToLootDict(new Food((FoodTypes)(Dice.D6())), c.X, c.Y, c.DungeonLevel);
+                }
+                
+            }
+            else
+            if (c is Level3Monster)
+            {
+                this.AddToLootDict(new Food(FoodTypes.RareCandy), c.X, c.Y, c.DungeonLevel);
+            }
+
+            if(Dice.D20() == 20)
+            {
+                this.AddToLootDict(new Food(FoodTypes.RareCandy), c.X, c.Y, c.DungeonLevel);
             }
 
             for (int i = 0; i < c.Inventory.Entries.Length; i++)
@@ -692,6 +742,16 @@ class Dungeon
             if (LevelChange == -1)
             {
                 this.NewMessage("Would you like to exit the dungeon? ");
+                this.NewMessage("[y]es/[n]o?");
+                key = Console.ReadKey(true).Key;
+                if((char)key == 'Y')
+                {
+                    return ConsoleKey.Escape;
+                }
+                else
+                {
+                    LevelChange = 0;
+                }
             }
             if (LevelChange != 0)
             {
@@ -710,8 +770,6 @@ class Dungeon
         {
             if (this.LootDict.ContainsKey((this.Hero.X, this.Hero.Y, this.Hero.DungeonLevel)))
             {
-
-
                 //Print out items on the ground
                 Container<Item> Loot = this.ItemsOnGround(this.Hero.X, this.Hero.Y, this.Hero.DungeonLevel);
                 PrintLoot(Loot);
@@ -722,7 +780,14 @@ class Dungeon
                 {
                     if (Loot.Entries[input] != null)
                     {
-                        this.Hero.PickUpItem(Loot.Entries[input]);
+                        if (Loot.Entries[input] is Food)
+                        {
+                            this.NewMessage(Loot.Entries[input].Use(this.Hero, 0));
+                        }else
+                        {
+                            this.Hero.PickUpItem(Loot.Entries[input]);
+                        }
+
                         this.ItemPickedUp(Loot.Entries[input], this.Hero.X, this.Hero.Y, this.Hero.DungeonLevel);
                     }
                 }
@@ -979,6 +1044,7 @@ class Dungeon
 
     public void UpdateMap(Room CurrentRoom, int Level, bool Override = false)
     {
+        
         char[,] NewRoom = CurrentRoom.Representation(!this.MapFinalized || Override);
         for (int i = 0; i < CurrentRoom.Width; i++)
         {
@@ -1273,7 +1339,7 @@ class Dungeon
             if (ValidPassageway)
             {
                 passageways += 1;
-                this.UpdateAllRooms();
+                //this.UpdateAllRooms();
                 // Console.WriteLine($"Passageway {passageways} completed at {StartX}, {StartY}");
                 // PrintGrid(grid);
                 // char Waiting = Console.ReadKey(true).KeyChar;
@@ -1397,7 +1463,6 @@ class Dungeon
         }
         catch (NullReferenceException)
         {
-            this.DebugPrint(0, 0, 0);
         }
 
         if (Right > 0)

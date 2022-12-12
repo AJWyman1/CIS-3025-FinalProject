@@ -13,7 +13,7 @@ class Program
         if (input == 'y')
         {
             Console.Clear();
-            PlayerCharacter Larry = new PlayerCharacter(ChooseRace(), SelectClass(), SetPlayerName(), ChooseStats());
+            PlayerCharacter Larry = new PlayerCharacter(ChooseRace(), SelectClass(), SetPlayerName());
 
             PotionOfHealing HealthPot = new PotionOfHealing();
 
@@ -22,7 +22,8 @@ class Program
             PotionOfHealing HealthPot2 = new PotionOfHealing();
             Larry.PickUpItem(HealthPot2);
             
-            Console.WriteLine("Before you is the entrance to a dungeon that is rumoured to contain a treasure chest full of wealth beyond your greatest imagination guarded by hordes of foes and others searching for wealth.\nAll those who have entered either come out scarred and empty handed or not at all. \nDo you dare to decend? [y/n]");
+			Console.Clear();
+            Console.WriteLine("Before you is the entrance to a dungeon that is rumoured to contain a treasure chest full of wealth beyond your greatest imagination \n\tguarded by hordes of foes and others searching for wealth.\n\nAll those who have entered either come out scarred and empty handed or not at all. \nDo you dare to decend? [y/n]");
             if (Console.ReadKey(true).KeyChar == 'y')
             {
                 Game(Larry);
@@ -34,7 +35,7 @@ class Program
         }else if (input == 'r')
         {
             Console.Clear();
-            PlayerCharacter Larry = new PlayerCharacter(Race.HalfOrc, Class.Monk, "Larry");
+            PlayerCharacter Larry = new PlayerCharacter(Race.HalfOrc, Class.Paladin, "Larry");
 
             PotionOfHealing HealthPot = new PotionOfHealing();
 

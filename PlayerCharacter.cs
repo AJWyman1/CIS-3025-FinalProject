@@ -68,8 +68,10 @@ class PlayerCharacter : Creature {
 		this.Inventory = new Container<Item>(9);
 		this.Name = playerName;
 		this.PlayerRace = playerRace;
-		this.AddRacialModifiers();
 		this.PlayerClass = playerClass;
+		this.ClassStatsAndInventory();
+
+		this.AddRacialModifiers();
 		this.SetClassProficiencies();
 		this.SetHitDie();
 		this.HP += this.HitDie + AbilityModifier(this.Constitution);
@@ -77,7 +79,7 @@ class PlayerCharacter : Creature {
 		this.GoldPouch = 50;
 		this.ArmorClass = 10 + this.AbilityModifier(this.Dexterity);
 		this.Color = ConsoleColor.Blue;
-		this.ClassStatsAndInventory();
+		
 	}
 
 	public override void LevelUp()

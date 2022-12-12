@@ -66,11 +66,6 @@ abstract class Item: IUsable, ILocatable, IComparable
             throw new ArgumentException("Not an Item");
     }
 
-    // public override bool Equals(object obj)
-    // {            
-    //     return obj.ToString().Equals(ToString());
-    // }
-
     public override string ToString()
     {
         return this.Name;
