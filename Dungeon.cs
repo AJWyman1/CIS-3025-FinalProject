@@ -121,36 +121,6 @@ class Dungeon
     }
 
     // I WARNED YOU ABOUT THE STAIRS BRO;
-    public void Stairs()
-    {
-        int X;
-        int Y;
-        for (int k = 0; k < 2; k++)
-        {
-            do
-            {
-                X = Dice.Roll(this.Map.GetLength(0) - 1);
-                Y = Dice.Roll(this.Map.GetLength(1) - 1);
-            } while (this.Map[X, Y, k] != '.'); //Rolls dice for location
-            this.GetRoom(X, Y, k).AddStairs(X, Y, true);
-            this.Map[X, Y, k] = this.GetRoom(X, Y, k).StairLocations[(X, Y)].RepresentWith;
-
-            do
-            {
-                X = Dice.Roll(this.Map.GetLength(0) - 1);
-                Y = Dice.Roll(this.Map.GetLength(1) - 1);
-            } while (this.Map[X, Y, k] != '.'); //Rolls dice for location
-            this.GetRoom(X, Y, k).AddStairs(X, Y, false);
-            this.Map[X, Y, k] = this.GetRoom(X, Y, k).StairLocations[(X, Y)].RepresentWith;
-        }
-        do
-        {
-            X = Dice.Roll(this.Map.GetLength(0) - 1);
-            Y = Dice.Roll(this.Map.GetLength(1) - 1);
-        } while (this.Map[X, Y, 2] != '.'); //Rolls dice for location
-        this.GetRoom(X, Y, 2).AddStairs(X, Y, false);
-        this.Map[X, Y, 2] = this.GetRoom(X, Y, 2).StairLocations[(X, Y)].RepresentWith;
-    }
 
     public void Stairs(int Level, Room StairRoom, Boolean Down)
     {
@@ -174,8 +144,6 @@ class Dungeon
 
     public void CreateRoomContaining(int ContainsX, int ContainsY, int Level)
     {
-        
-
         int width = Dice.Roll(10) + 5;
         int length = Dice.Roll(10) + 5;
         
@@ -196,16 +164,6 @@ class Dungeon
                 DoesntContain = !r.IsInRoom(ContainsX, ContainsY, Level);
             }
         }while(DoesntContain);
-
-        // while(X + length >= this.Map.GetLength(0) - 2 || Y + width >= this.Map.GetLength(1) - 2)
-        // {
-        //     width = Dice.Roll(15) + 5;
-        //     length = Dice.Roll(15) + 5;
-                
-        //     X = ContainsX - width/2 + width/4;
-        //     Y = ContainsY - length/2 + length/4;
-        //     Console.WriteLine($"Room at ({X}, {Y}) contains ({ContainsX}, {ContainsY})");
-        // }
 
         this.Rooms[Level][0] = new Room(X, Y, width, length, this.Hero, Level);
         this.RoomDict.Add((X, Y, Level), this.Rooms[Level][0]);
@@ -234,12 +192,6 @@ class Dungeon
         this.Hero = p;
         PlaceCreatureInRoom(this.CurrentLevel, this.Hero);
         this.Stairs(0, this.GetRoom(this.Hero.X, this.Hero.Y, 0), false, this.Hero.X, this.Hero.Y);
-    }
-
-    public void PlaceHeroInRoom(PlayerCharacter p, int X, int Y)
-    {
-        this.Hero = p;
-        this.MonsterDict.Add((X, Y, this.CurrentLevel), this.Hero);
     }
 
     public void PlaceCreatureInRoom(int Level, Creature c = null)

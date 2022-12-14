@@ -658,27 +658,6 @@ class PlayerCharacter : Creature {
 		this.Proficiencies += ClassProficiencies[(int)this.PlayerClass];
 	}
 
-	public void SetProficiencies()
-	{
-		string[] ClassProficiencies = 
-		{
-			"light armor, medium armor, shield, simple weapon, martial weapon, ",
-			"light armor, simple weapon, hand crossbow, longsword, rapier, shortsword, ",
-			"light armor, medium armor, shield, simple weapon, ",
-			"light armor (nonmetal), medium armor (nonmetal), shield (nonmetal), club, dagger, dart, javelin, mace, quarterstaff, scimitar, sickle, sling, spear, ",
-			"light armor, medium armor, heavy armor, shield, simple weapon, martial weapon, ",
-			"simple weapon, shortsword, ",
-			"light armor, medium armor, heavy armor, shield, simple weapon, martial weapon, ",
-			"light armor, medium armor, shield, simple weapon, martial weapon, ",
-			"light armor, simple weapon, hand crossbow, longsword, rapier, shortsword, ",
-			"dagger, dart, sling, quarterstaff, light crossbow, ",
-			"light armor, simple weapon, ",
-			"dagger, dart, sling, quarterstaff, light crossbow, "
-		};
-
-		this.Proficiencies += ClassProficiencies[(int)this.PlayerClass];
-	}
-
 	public void SetHitDie()
 	{
 		if (this.PlayerClass == Class.Barbarian)
