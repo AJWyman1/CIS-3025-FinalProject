@@ -261,11 +261,6 @@ class Dungeon
         return false;
     }
 
-    public void RemoveMob(Creature c)
-    {
-        this.MonsterDict.Remove((c.X, c.Y, c.DungeonLevel));
-    }
-
     public bool MovementAllowed(int X, int Y, int DungeonLevel, Creature c)
     {
 
@@ -361,18 +356,6 @@ class Dungeon
         this.PrintLocation(a.X, a.Y, a.DungeonLevel);
         this.PrintLocation(b.X, b.Y, b.DungeonLevel);
     }
-
-    public void ClearMessages()
-    {
-        Console.SetCursorPosition(0, this.Length);
-        Console.WriteLine("".PadRight(Console.WindowWidth));
-        Console.WriteLine("".PadRight(Console.WindowWidth));
-        Console.WriteLine("".PadRight(Console.WindowWidth));
-        Console.WriteLine("".PadRight(Console.WindowWidth));
-
-        this.PrintMessageHistory();
-    }
-
     public void PostFightUpdate(Creature c)
     {
         if (!c.IsAlive)
@@ -898,11 +881,6 @@ class Dungeon
             // Console.ResetColor();
         }
         Console.ForegroundColor = default(ConsoleColor);
-    }
-
-    public Creature GetCreature(int x, int y, int Level)
-    {
-        return this.MonsterDict[(x, y, Level)];
     }
 
     public void UpdateAllRooms(bool Override = false)
@@ -1475,10 +1453,6 @@ class Dungeon
                 }
             }
         }
-    }
-    public bool IsWall(char C)
-    {
-        return !(new char[] { '│', '─', '┌', '┐', '┘', '└', '.' }.Contains(C));
     }
 
     public bool Navigatable()
