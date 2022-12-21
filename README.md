@@ -45,17 +45,89 @@ Inspired by NetHack and D&D
 ---
 ### ToDo
 
+
+- Game driver class to handle input and build dungeon
+- Split up Dungeon class into smaller classes
+    - Dungeon
+        - Level
+            - Room
+                 - Stairs
+                 - Doors
+            - P-ways
+- Resistances do something
+- Make mobs more player-like
+    - pick up items
+    - use items
+    - Use stairs
+    - better movement
 - Optimization 
+    - Better drawing algorithm 
 - Replay option after death   
-- Respawn chance for enemies    
-- Name your weapon  
+    - Play again? [y/n]
+- Spawn chance for Mobs
+- Better inventory system/ Inventory management
+    - Drop items
+    - Bag upgrades
+    - Name your weapon  
+- Ranged combat
+    - Ranged weapons/ammo
+        - ammo in quiver or in bag
+    - Aiming ability 
+        - straight line 
+            - Choose a direction (N, NW, E, SE, etc)
+            - check in direction for a target
+
+            or 
+        - Select tile to aim at 
+            - aim with '×'
+            - '×' blinks with char on map
+            - choose where to shoot
+        - Distance and damage calculation
 - More Items
     - Armor
-    - Shields     
+    - Shields
+    - more potions
+    - Cargo pants to hold more items? (Joke but also....Maybe?)
 - Sneak skill
     - Alert mobs at varying range depending on sneak
+    - Player Detected attribute
 - Dual wield/off hand equipment  
 - Class skills   
 - End game screen  
 - Final Scores   
 - Balance issues 
+- Other D&D inspired functionality
+    - Advantage/Disadvantage
+    - Grapple?
+
+### Berlin interpretation of Rogue-likes
+-----
+**High value factors**
+- Random environment generation
+- Permanent-death
+- Turn-based
+- Grid-based
+- Non-Modal
+    - All actions take place on the same mode.
+    - Every action available to player at any point
+- Complexity
+    - Several solutions to same problem
+    - item/item and item/monster interactions
+- Resource management
+- Hack 'n' slash
+- Exploration and discovery
+    - exploration of dungeon levels
+    - discovery of the usage of unidentified items
+----
+**Low value factors**
+- Single player character
+- Monsters are similar to players
+    - inventories, equipment, use items, cast spells etc.
+- Tactical challenge
+    - Learn tactics before making significant progress
+    - focus is tactical challenges opposed to solving puzzles or strategically working big picture 
+- ASCII Display
+- Dungeons
+    - levels composed of rooms and corridors
+- Numbers
+    - Numbers used to describe the character (HP, attributes, etc.)

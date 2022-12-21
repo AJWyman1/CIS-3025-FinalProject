@@ -302,7 +302,7 @@ class Dungeon
 
     public void PrintFightLog(Creature a, Creature b)
     {
-        if (a.RepresentWith == b.RepresentWith)
+        if (a.RepresentWith == b.RepresentWith) // Monsters of same type dont fight eachother
         {
             return;
         }
@@ -310,6 +310,8 @@ class Dungeon
         Console.SetCursorPosition(0, this.Length);
         if (a is PlayerCharacter || b is PlayerCharacter)
         {
+            // Check if a mimic and have mimic attack(shapeshift) 
+            //TODO: Find a better way to handle this.
             if (a.RepresentWith == 'C')
             {
 
@@ -328,22 +330,23 @@ class Dungeon
             }
 
             this.NewMessage(a.Attack(b));
-
+            this.PrintCharSheet(this.Hero); //Updates the char sheet after an attack so Hit points are correct
             this.PostFightUpdate(a);
             this.PostFightUpdate(b);
         }
-        else
+        else // Monster fight; Player not involved
         {
             a.Attack(b);
             if (a.DungeonLevel == this.Hero.DungeonLevel)
             {
-                this.NewMessage("You hear fighting in the distance");
+                this.NewMessage("You hear fighting in the distance"); // Output if player is on same level as fight
             }
 
             this.PostFightUpdate(a);
             this.PostFightUpdate(b);
 
         }
+
         if (b.HP <= 0) //XP gain
         {
             if (a is PlayerCharacter)
