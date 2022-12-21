@@ -101,6 +101,9 @@ Inspired by NetHack and D&D
     - Grapple?
 
 ### Berlin interpretation of Rogue-likes
+
+> http://www.roguebasin.com/index.php?title=Berlin_Interpretation
+
 -----
 **High value factors**
 - Random environment generation
