@@ -13,7 +13,7 @@ Inspired by NetHack and D&D
 
 ---
 
-### Features
+## Features
 - Random Level Generation
     - Rooms Random size and don't overlap existing rooms
     - Hallways random
@@ -22,28 +22,34 @@ Inspired by NetHack and D&D
     - Ascending stairs placed at the same location as descending stairs on Dungeon level above
 - Items
     - Weapons
-        - default constructors
+        - default stats
         - override defaults for customized weapons
     - Potions
+        - Healing potion
+        - ***More coming soon***
     - Food
         - Heals a percentage of Max HP
         - Randomly drops from monsters after their death
 - Enemies
     - Level 1, 2, 3
+        - increasing XP drop and inventory 
+    - Interaction with other enemies
     - Randomized spawn based on dungeon level
+    - Move towards and attack player when close enough 
 - Player
     - Customize Species and Class
     - Sets Attributes based on Class
     - Starting weapon based on Class
+    - Gains levels fighting through dungeon 
 - Visuals
     - colors for all dungeon inhabitants, loot, and doors
-    - Unable to see inside rooms unless inside
+    - Unable to see inside rooms unless currently inside
     - See pathway ahead
-    - Room walls, doors, stairs visible after player discovers the room
+    - Room walls, doors, stairs, corridors, stay visible after player discovers the room
 ---
 
 ---
-### ToDo
+## ToDo
 
 
 - Game driver class to handle input and build dungeon
@@ -100,7 +106,10 @@ Inspired by NetHack and D&D
     - Advantage/Disadvantage
     - Grapple?
 
-### Berlin interpretation of Rogue-likes
+### Needs fixing 
+- Stairs in walls
+
+## Berlin interpretation of Rogue-likes
 
 > http://www.roguebasin.com/index.php?title=Berlin_Interpretation
 

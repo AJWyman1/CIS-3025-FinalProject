@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 abstract class Weapon : Item
 {
     public string DamageType { get; protected set;}
-    public string[] WeaponType { get; protected set; }
+    public string[] WeaponType { get; protected set;}
     public bool isRanged { get; protected set;}
     protected int Sides;
     protected int NumDice;

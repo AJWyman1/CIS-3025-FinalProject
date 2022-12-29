@@ -1,139 +1,3 @@
-Stairs 
-	-Spawn
-	-Interaction
-level 1, 2, 3
-	-Creation
-		-mobs
-	-Respawn
-Rooms
-	-Print '.''s when player in room only
-
-inventory mngmt?
-
-
-
-
-
-
-
-
-**** Required ****
-
-Item
-	
-	Potion 
-		HealingPot
-			-Attributes
-			-Methods
-		______
-			-Attributes
-			-Methods
-	ItemType2
-		______
-			-Attributes
-			-Methods
-
-Creature
-	-Interfaces
-		IMobile 
-			GoTo(X, Y)
-			MoveNorth
-			MoveEast
-			MoveSouth
-			MoveWest
-			Face(Direction)
-			MoveForward
-			Turn(int)
-
-			ILocatable
-				X
-				Y
-				Facing
-
-		IActionable
-			Initiative
-
-			Attack
-			Defend
-			DefendAgainst(Creature)
-			Use(IUseable)
-			Rest()
-
-	-Attributes
-		inventory item[]
-
-	-Methods
-		RollInitiative(Multiple Creatures) //How to add variable number of objects into function
-			D20 + modifier
-			return array of creatures in order of initiative
-		IMobile methods
-		IActionable methods
-	---------------------
-	Creaturetype1
-		Monster1
-			-Attributes
-			-Methods
-		Monster2
-			-Attributes
-			-Methods
-	Creaturetype2
-	
-		Monster1
-			-Attributes
-			-Methods
-		Monster2
-			-Attributes
-			-Methods
-	Creaturetype3
-		Monster1
-			-Attributes
-			-Methods
-		Monster2
-			-Attributes
-			-Methods
-	---------------------
-	PlayerCharacter
-		-Attributes
-			inventory item[] 
-		-Methods
-			CreateNew
-				RollStats
-				ChooseClass
-					Class Modifiers
-			PickupItem
-				Item location -> 999,999 (backpack)
-				inventory append item
-			DropItem
-				Item location -> PC.X, PC.Y
-				inventory remove item
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Main
-	Driver function
-		Create PlayerCharacter
-		Spawn Items
-		Spawn creatures
-		Fight()
-
-	Fight(Creature player1, Creature player2)
-		initiative array = Rollinitiative
-		while player1 and player2 alive
-			loop initiative array
-				if playerchar
-					print options
-					take input
-				else
-					Monster fight
-
-
-
-
-
-
-
-
-
-
 Classes
 
 	Starting Equipment 
@@ -197,3 +61,44 @@ Classes
 			(a) a quarterstaff or (b) a dagger
 			(a) a eomponent pouch or (b) an arcane focus 
 			(a) a scholar's pack or (b) an explorer's pack A spellbook
+
+armor
+	light
+		padded
+			11 + dex mod
+			stealth disadvantage
+		leather
+			11 + dex mod
+		studded leather
+			12 + dex mod
+	medium
+		Hide
+			12 + dex mod max 2
+		Chain shirt
+			13 + dex mod max 2
+		scale mail	
+			14 + dex mod max 2
+			stealth disadvantage
+		breastplate
+			14  + dex mod max 2
+		half plate 
+			15 + dex mod max 2
+			stealth disadvantage
+	heavy
+		ring mail
+			14
+			stealth disadvantage
+		chainmail	
+			16
+			str 13
+			stealth disadvantage
+		splint
+			17
+			str 15
+			stealth disadvantage
+		plate
+			18
+			str 15
+			stealth disadvantage
+	shield
+		+2
