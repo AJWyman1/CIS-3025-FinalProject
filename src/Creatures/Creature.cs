@@ -5,30 +5,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-abstract class Creature: IMobile, IActionable, IComparable
+abstract class Creature : IMobile, IActionable, IComparable
 {
     /* Fields */
 
     protected int[] attributes;
-    
+
     /* Properties */
     public String Name { get; protected set; }
-    public Container<Item> Inventory {get; protected set;}
+    public Container<Item> Inventory { get; protected set; }
     public int HP { get; set; }
-    public int MaxHP { get; protected set;}
+    public int MaxHP { get; protected set; }
     public int ArmorClass { get; protected set; }
-    public bool Darkvision { get; protected set; } 
+    public bool Darkvision { get; protected set; }
     public string Resistances { get; protected set; }
-	public int GoldPouch { get; protected set;}
-    public Weapon EquippedWeapon { get; protected set;}
+    public int GoldPouch { get; protected set; }
+    public Weapon EquippedWeapon { get; protected set; }
+    public Armor EquippedArmor { get; protected set; }
+    public Item OffHand { get; protected set; } //Used for shields, one handed weapons
     public int ToHit { get; protected set; }
-    public ConsoleColor Color {get; set;}
-    public int XP {get; protected set;}
-    public int XPGiven {get; protected set;}
-    public int Level {get; protected set;}
-    public int DungeonLevel {get; set;}
-    
-    public bool IsAlive {get; protected set; }
+    public ConsoleColor Color { get; set; }
+    public int XP { get; protected set; }
+    public int XPGiven { get; protected set; }
+    public int Level { get; protected set; }
+    public int DungeonLevel { get; set; }
+
+    public bool IsAlive { get; protected set; }
 
     public int Strength
     {
@@ -110,15 +112,15 @@ abstract class Creature: IMobile, IActionable, IComparable
 
     /* ILocatable Properties */
 
-    public int X {get; set;}
-    public int Y {get; set;}
-    public Direction Facing {get; set;}
+    public int X { get; set; }
+    public int Y { get; set; }
+    public Direction Facing { get; set; }
     public char RepresentWith { get; set; } //Char representation for print out in Console
 
     /* IActionable Properties */
 
-    public int Initiative {get; set;}
-    
+    public int Initiative { get; set; }
+
 
     /* Constructors */
 
@@ -126,7 +128,7 @@ abstract class Creature: IMobile, IActionable, IComparable
     {
         this.attributes = new int[6];
         this.Darkvision = false;
-        this.HP = 0;          
+        this.HP = 0;
         this.Resistances = "";
         this.ToHit = 0;
         this.Inventory = new Container<Item>(2);
@@ -158,18 +160,18 @@ abstract class Creature: IMobile, IActionable, IComparable
             {
                 this.LevelUp();
             }
-        }while(this.XP >= 10);
+        } while (this.XP >= 10);
     }
 
     public virtual void LevelUp()
     {
-        for(int i = 0; i < this.attributes.Length; i++)
-                {
-                    this.attributes[i] += 1;
-                }
-                this.XP -= 10;
-                this.Level += 1;
-                this.XPGiven += 2;
+        for (int i = 0; i < this.attributes.Length; i++)
+        {
+            this.attributes[i] += 1;
+        }
+        this.XP -= 10;
+        this.Level += 1;
+        this.XPGiven += 2;
     }
 
 
@@ -182,11 +184,11 @@ abstract class Creature: IMobile, IActionable, IComparable
     }
     public bool InventoryFull()
     {
-        for(int i = 0; i < this.Inventory.Entries.Length; i++)
+        for (int i = 0; i < this.Inventory.Entries.Length; i++)
         {
             if (this.Inventory.Entries[i] == null) //Any slot is null means Inventory is not full
             {
-                return false; 
+                return false;
             }
         }
         return true; //Inventory full
@@ -212,13 +214,13 @@ abstract class Creature: IMobile, IActionable, IComparable
             "\nAC: " + this.ArmorClass +
             "\nResistances: " + this.Resistances +
             "\n============" +
-            "\nDarkvision: " + this.Darkvision + "\n" + 
-			"\n============" +
-			"\nInventory:\n" +
-			this.PrintInventory() +  "\n" +
+            "\nDarkvision: " + this.Darkvision + "\n" +
+            "\n============" +
+            "\nInventory:\n" +
+            this.PrintInventory() + "\n" +
             this.GoldPouch + "GP" +
             "\n============" +
-			"\nEquipped Weapon:" + this.EquippedWeapon;
+            "\nEquipped Weapon:" + this.EquippedWeapon;
         return output;
     }
 
@@ -233,13 +235,13 @@ abstract class Creature: IMobile, IActionable, IComparable
     /*                  --------    IActionable methods     --------             */
 
     public virtual string Attack(Creature c)
-	{
-		int Damage;
-		int Modifier;
+    {
+        int Damage;
+        int Modifier;
 
-		//AC Check
-		int roll = Dice.D20();
-		bool Crit = roll == 20; //Critical hit on nat 20
+        //AC Check
+        int roll = Dice.D20();
+        bool Crit = roll == 20; //Critical hit on nat 20
 
         if (this.HP <= 0)
         {
@@ -247,62 +249,66 @@ abstract class Creature: IMobile, IActionable, IComparable
             return $"{this.Name} is dead and cannot fight";
         }
 
-		if (this.EquippedWeapon != null) //Attack with a weapon if equipped 
-		{
-			if (this.EquippedWeapon.isRanged){ Modifier = this.AbilityModifier(this.Dexterity);} //Ranged weapon modifier is DEX
-			else { Modifier = this.AbilityModifier(this.Strength);} //Melee weapon modifier is STR
+        if (this.EquippedWeapon != null) //Attack with a weapon if equipped 
+        {
+            if (this.EquippedWeapon.isRanged) { Modifier = this.AbilityModifier(this.Dexterity); } //Ranged weapon modifier is DEX
+            else { Modifier = this.AbilityModifier(this.Strength); } //Melee weapon modifier is STR
 
-			if ((roll + Modifier + this.ToHit) > c.ArmorClass || Crit) //Hit
-			{
-				Damage = this.EquippedWeapon.RollDamage() + Modifier;
-				if (Crit){ Damage += this.EquippedWeapon.RollDamage();}
-				c.HP -= Damage;
+            if ((roll + Modifier + this.ToHit) > c.ArmorClass || Crit) //Hit
+            {
+                Damage = this.EquippedWeapon.RollDamage() + Modifier;
+                if (Crit) { Damage += this.EquippedWeapon.RollDamage(); }
+                c.HP -= Damage;
                 c.Defend();
-				return $"{this.Name}({this.HP}/{this.MaxHP}){(Crit ? " CRITICALLY" : "")} hits {c.Name}({c.HP}/{c.MaxHP}) with their {this.EquippedWeapon.Name} for {Damage} points of {this.EquippedWeapon.DamageType} damage!";
-			}else 
-			{
-				return $"{this.Name}({this.HP}/{this.MaxHP}) swings their {this.EquippedWeapon.Name} and MISSES {c.Name}({c.HP}/{c.MaxHP})!";
-			}
-		}else //unarmed attack if no weapon equipped
-		{
-			Modifier = this.AbilityModifier(this.Strength);
+                return $"{this.Name}({this.HP}/{this.MaxHP}){(Crit ? " CRITICALLY" : "")} hits {c.Name}({c.HP}/{c.MaxHP}) with their {this.EquippedWeapon.Name} for {Damage} points of {this.EquippedWeapon.DamageType} damage!";
+            }
+            else
+            {
+                return $"{this.Name}({this.HP}/{this.MaxHP}) swings their {this.EquippedWeapon.Name} and MISSES {c.Name}({c.HP}/{c.MaxHP})!";
+            }
+        }
+        else //unarmed attack if no weapon equipped
+        {
+            Modifier = this.AbilityModifier(this.Strength);
 
-			if ((roll + Modifier) > c.ArmorClass || Crit) //Hit
-			{
-				Damage = 1;
-				if (Crit){ Damage = 2; }
-				c.HP -= Damage;
+            if ((roll + Modifier) > c.ArmorClass || Crit) //Hit
+            {
+                Damage = 1;
+                if (Crit) { Damage = 2; }
+                c.HP -= Damage;
                 c.Defend();
-				return $"{this.Name}({this.HP}/{this.MaxHP}){(Crit ? " CRITICALLY" : "")} hits {c.Name}({c.HP}/{c.MaxHP}) with their fists for {Damage} of bludgeoning damage!";
-			}else{
-				return $"{this.Name}({this.HP}/{this.MaxHP}) swings their fists and MISSES {c.Name}({c.HP}/{c.MaxHP})!";
-			}
-		}
-	}    
+                return $"{this.Name}({this.HP}/{this.MaxHP}){(Crit ? " CRITICALLY" : "")} hits {c.Name}({c.HP}/{c.MaxHP}) with their fists for {Damage} of bludgeoning damage!";
+            }
+            else
+            {
+                return $"{this.Name}({this.HP}/{this.MaxHP}) swings their fists and MISSES {c.Name}({c.HP}/{c.MaxHP})!";
+            }
+        }
+    }
     public virtual string Defend()
-	{
+    {
         if (this.HP <= 0)
         {
             this.IsAlive = false;
             this.RepresentWith = 'x';
         }
-		return $"{this.Name} is defending";
-	}
+        return $"{this.Name} is defending";
+    }
 
-	public virtual string DefendAgainst(Creature c)
-	{
-		return $"{this.Name} defended against {c.Name}";
-	}
+    public virtual string DefendAgainst(Creature c)
+    {
+        return $"{this.Name} defended against {c.Name}";
+    }
 
-	public virtual string Rest()
-	{
-		return $"{this.Name} rested";
-	}
+    public virtual string Rest()
+    {
+        return $"{this.Name} rested";
+    }
 
     public Item RemoveItem(int Slot, bool ZeroIndexed = true)
-	{
-		return this.Inventory.Remove(Slot);
-	}
+    {
+        return this.Inventory.Remove(Slot);
+    }
 
     public string Use(IUsable item, int Slot)
     {
@@ -344,7 +350,7 @@ abstract class Creature: IMobile, IActionable, IComparable
         this.MoveEast(distance);
     }
     public void MoveSouthWest(int distance = 1)
-    {   
+    {
         this.MoveSouth(distance);
         this.MoveWest(distance);
     }
@@ -405,7 +411,7 @@ abstract class Creature: IMobile, IActionable, IComparable
     /* IComparable Sort by initiative */
     public int CompareTo(object obj)
     {
-        if (obj == null){return 1;}
+        if (obj == null) { return 1; }
 
         Creature otherItem = obj as Creature;
         if (otherItem != null)
@@ -417,18 +423,54 @@ abstract class Creature: IMobile, IActionable, IComparable
     /*              --------   Class Methods  --------                       */
 
     public int AbilityModifier(int ability)
-	{
-		return (int)Math.Floor((double)((ability - 10) / 2)); //Math.Floor to correctly round down
-	}
+    {
+        return (int)Math.Floor((double)((ability - 10) / 2)); //Math.Floor to correctly round down
+    }
+    public int AbilityModifier(string ability)
+    {
+        int stat = 0;
+
+        if (ability == "str")
+        {
+            stat = this.Strength;
+        }
+        else
+        if (ability == "dex")
+        {
+            stat = this.Dexterity;
+        }
+        else
+        if (ability == "con")
+        {
+            stat = this.Constitution;
+        }
+        else
+        if (ability == "int")
+        {
+            stat = this.Intelligence;
+        }
+        else
+        if (ability == "wis")
+        {
+            stat = this.Wisdom;
+        }
+        else
+        if (ability == "cha")
+        {
+            stat = this.Charisma;
+        }
+
+        return this.AbilityModifier(stat);
+    }
     public void RollInitiative()
     {
         this.Initiative = Dice.D20() + this.AbilityModifier(this.Dexterity);
     }
-    
+
     public string PrintInventory()
-	{
-		return this.Inventory.ToString();
-	}
+    {
+        return this.Inventory.ToString();
+    }
 
     public void EquipWeapon(Weapon w)
     {
@@ -438,7 +480,8 @@ abstract class Creature: IMobile, IActionable, IComparable
             {
                 this.EquippedWeapon.X = this.X;
                 this.EquippedWeapon.Y = this.Y;
-            }else
+            }
+            else
             {
                 this.PickUpItem(this.EquippedWeapon);
             }
@@ -451,14 +494,14 @@ abstract class Creature: IMobile, IActionable, IComparable
         if (this.InventoryFull())
         {
             this.PickUpItem(this.EquippedWeapon);
-        
+
         }
-        
+
     }
     public string Heal(int h)
     {
         this.HP += h;
-		if (this.HP > this.MaxHP){this.HP = this.MaxHP;} //
-		return $"{this.Name} 1";
+        if (this.HP > this.MaxHP) { this.HP = this.MaxHP; } //
+        return $"{this.Name} 1";
     }
 }
